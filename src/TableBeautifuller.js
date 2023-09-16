@@ -1,7 +1,13 @@
 class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.getElementById(tableId);
+
+        // Initialisation de la lanhgue par défaut
         this.langData = options.lang || {};  // S'il n'y a pas de langage spécifié, utilisez un objet vide
+
+        // Initaliosation du trie par défaut
+        let orderString = this.table.getAttribute("data-order");
+        this.initialOrder = orderString ? JSON.parse(orderString) : [];
 
         // Initialisation des valeurs pour la pagination
         this.pageLength = parseInt(this.table.getAttribute("data-page-length")) || 15;
@@ -15,6 +21,7 @@ class TableBeautifuller {
         this.addSortingArrows();
         this.addSearchRow();
         this.addPaginationControls();
+        this.applyInitialOrder();
         this.paginate();
     }
 
@@ -157,6 +164,18 @@ class TableBeautifuller {
         });
 
         this.table.querySelector("tbody").append(...rows);
+    }
+
+    applyInitialOrder() {
+        this.initialOrder.forEach(orderCriteria => {
+            let [colIndex, direction] = orderCriteria;
+            let type = this.detectColumnType(colIndex);
+            this.sortTable(colIndex, type, direction.toLowerCase());
+
+            let header = this.table.querySelector(`th:nth-child(${colIndex + 1})`);
+            header.dataset.sort = direction.toLowerCase();
+            this.updateArrows(header); // Mettez à jour les flèches après avoir trié
+        });
     }
 
     searchTable(query) {
