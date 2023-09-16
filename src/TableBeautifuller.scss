@@ -1,0 +1,107 @@
+/**
+** TableBeautifuller
+** 
+**/
+
+
+/** Partie : table **/
+.tableBeautifuller {
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+        position: relative;
+    }
+
+    thead {
+        th {
+            cursor: pointer;
+            text-decoration: underline;
+
+            .sort-arrow {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+            }
+
+            > input, 
+            > select {
+                margin-top: 5px;
+                padding: 5px;
+                width: 100%;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            > input {
+                transition: 0.3s;
+            }
+
+            > input:focus {
+                border-color: #007BFF;
+                box-shadow: 0 0 5px rgba(0,123,255,0.5);
+            }
+
+            > select {
+                appearance: none;
+                background: url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
+                background-color: #fff;
+                cursor: pointer;
+            }
+
+            > select:hover {
+                border-color: #007BFF;
+            }
+        }
+    }
+
+    tbody {
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    }
+
+}
+
+
+
+/** Partie : wrapper-top **/
+.tableBeautifuller.pagination-wrapper-top-container {
+    .pagination-wrapper-top {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    .search-input {
+        display: block;
+        margin-bottom: 20px;
+        padding: 5px 10px;
+        float: right;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+}
+
+
+/** Partie : wrapper-bottom **/
+.tableBeautifuller.pagination-wrapper-bottom-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+
+
+    .pagination-info {
+        margin-right: auto;
+    }
+
+    .pagination-buttons-container {
+        .page-btn.active {
+            background-color: #007BFF;
+            color: white;
+        }
+    }
+}

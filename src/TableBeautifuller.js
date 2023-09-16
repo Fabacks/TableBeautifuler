@@ -2,10 +2,7 @@ class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.getElementById(tableId);
 
-        // Initialisation de la lanhgue par défaut
-        this.langData = options.lang || {};  // S'il n'y a pas de langage spécifié, utilisez un objet vide
-
-        // Initaliosation du trie par défaut
+        // Initialisation du trie par défaut
         let orderString = this.table.getAttribute("data-order");
         this.initialOrder = orderString ? JSON.parse(orderString) : [];
 
@@ -17,6 +14,19 @@ class TableBeautifuller {
     }
 
     init() {
+        // Ajout de la classe "tableBeautifuller" à la table
+        this.table.classList.add('tableBeautifuller');
+
+        // Création du wrapper "pagination-wrapper-top-container" au dessus du tableau
+        this.paginationWrapperTopContainer = document.createElement('div');
+        this.paginationWrapperTopContainer.classList.add('tableBeautifuller', 'pagination-wrapper-top-container');
+        this.table.parentNode.insertBefore(this.paginationWrapperTopContainer, this.table);
+
+        // Création du wrapper "pagination-wrapper-bottom-container" en dessous du tableau
+        this.paginationWrapperBottomContainer = document.createElement('div');
+        this.paginationWrapperBottomContainer.classList.add('tableBeautifuller', 'pagination-wrapper-bottom-container');
+        this.table.parentNode.insertBefore(this.paginationWrapperBottomContainer, this.table.nextSibling);
+
         this.addSearchInput();
         this.addSortingArrows();
         this.addSearchRow();
@@ -30,7 +40,7 @@ class TableBeautifuller {
         this.searchInput.setAttribute("type", "text");
         this.searchInput.setAttribute("placeholder", "Recherche...");
         this.searchInput.className = "search-input";
-        this.table.parentNode.insertBefore(this.searchInput, this.table);
+        this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
         this.searchInput.addEventListener("keyup", () => {
             this.searchTable(this.searchInput.value);
@@ -39,38 +49,39 @@ class TableBeautifuller {
 
     addSearchRow() {
         let searchRow = document.createElement('tr');
+        searchRow.classList.add("thead-search");
         let headers = this.table.querySelectorAll("th");
 
         headers.forEach(header => {
             let cell = document.createElement('th');
-            let searchType = header.getAttribute('data-search');
+            let searchType = header.getAttribute('data-search') ?? '';
 
-            // iteration suivante si pas de search sur la colonne
-            if (!searchType) {
-                return; 
-            }
-
-            if (searchType === "input") {
-                let input = document.createElement('input');
-                input.type = "text";
-                input.addEventListener('input', (e) => {
-                    this.filterTable(header.cellIndex, e.target.value);
-                });
-                cell.appendChild(input);
-            } else if (searchType === "combobox") {
-                let select = document.createElement('select');
-                let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex);
-                select.innerHTML = `<option value="">Tout</option>`;
-                uniqueValues.forEach(val => {
-                    let option = document.createElement('option');
-                    option.value = val;
-                    option.textContent = val;
-                    select.appendChild(option);
-                });
-                select.addEventListener('change', (e) => {
-                    this.filterTable(header.cellIndex, e.target.value);
-                });
-                cell.appendChild(select);
+            switch (searchType) {
+                case "input":
+                    let input = document.createElement('input');
+                    input.type = "text";
+                    input.addEventListener('input', (e) => {
+                        this.filterTable(header.cellIndex, e.target.value);
+                    });
+                    cell.appendChild(input);
+                break;
+                case "combobox":
+                    let select = document.createElement('select');
+                    let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex);
+                    select.innerHTML = `<option value="">Tout</option>`;
+                    uniqueValues.forEach(val => {
+                        let option = document.createElement('option');
+                        option.value = val;
+                        option.textContent = val;
+                        select.appendChild(option);
+                    });
+                    select.addEventListener('change', (e) => {
+                        this.filterTable(header.cellIndex, e.target.value);
+                    });
+                    cell.appendChild(select);
+                break;
+                default:
+                    return;
             }
 
             searchRow.appendChild(cell);
@@ -174,7 +185,7 @@ class TableBeautifuller {
 
             let header = this.table.querySelector(`th:nth-child(${colIndex + 1})`);
             header.dataset.sort = direction.toLowerCase();
-            this.updateArrows(header); // Mettez à jour les flèches après avoir trié
+            this.updateArrows(header);
         });
     }
 
@@ -219,7 +230,7 @@ class TableBeautifuller {
         let startPage = Math.max(1, this.currentPage - 2);
         let endPage = Math.min(totalPages, this.currentPage + 2);
     
-        let pageButtons = this.paginationWrapper.querySelectorAll('.page-btn');
+        let pageButtons = this.paginationWrapperBottomContainer.querySelectorAll('.page-btn');
         pageButtons.forEach((btn, idx) => {
             let pageNumber = startPage + idx;
             btn.textContent = pageNumber;
@@ -229,9 +240,6 @@ class TableBeautifuller {
     }
 
     addPaginationControls() {
-        this.paginationWrapperTopContainer = document.createElement('div');
-        this.paginationWrapperTopContainer.className = 'pagination-wrapper-top-container';
-    
         this.paginationWrapperTop = document.createElement('div');
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
     
@@ -255,20 +263,20 @@ class TableBeautifuller {
         this.paginationWrapperTop.appendChild(this.paginationInfoTopAfter);
 
         this.paginationWrapperTopContainer.appendChild(this.paginationWrapperTop);
-        this.table.parentNode.insertBefore(this.paginationWrapperTopContainer, this.table);
-
-        this.paginationWrapper = document.createElement('div');
-        this.paginationWrapper.className = 'pagination-wrapper-bottom';
 
         // Information display
         this.infoLabel = document.createElement('span');
         this.infoLabel.className = 'pagination-info';
-        this.paginationWrapper.appendChild(this.infoLabel);
+        this.paginationWrapperBottomContainer.appendChild(this.infoLabel);
+
+        // Création du wrapper "pagination-buttons-container"
+        this.paginationButtonsContainer = document.createElement('div');
+        this.paginationButtonsContainer.className = 'pagination-buttons-container';
 
         // Previous & Next buttons and pages display
         this.prevButton = document.createElement('button');
         this.prevButton.textContent = 'Précédent';
-        this.paginationWrapper.appendChild(this.prevButton);
+        this.paginationButtonsContainer.appendChild(this.prevButton);
 
         // Display pages (for simplicity we'll display five pages for now)
         for (let i = 1; i <= 5; i++) {
@@ -279,14 +287,13 @@ class TableBeautifuller {
                 this.currentPage = parseInt(pageButton.textContent);
                 this.paginate();
             });
-            this.paginationWrapper.appendChild(pageButton);
+            this.paginationButtonsContainer.appendChild(pageButton);
         }
 
         this.nextButton = document.createElement('button');
         this.nextButton.textContent = 'Suivant';
-        this.paginationWrapper.appendChild(this.nextButton);
-
-        this.table.parentNode.appendChild(this.paginationWrapper);
+        this.paginationButtonsContainer.appendChild(this.nextButton);
+        this.paginationWrapperBottomContainer.appendChild(this.paginationButtonsContainer);
 
         // Event listeners
         this.paginationSelect.addEventListener("change", () => {
@@ -307,10 +314,6 @@ class TableBeautifuller {
     }
 
     destroy() {
-        if (this.searchInput) {
-            this.searchInput.remove();
-        }
-
         // Supprimer l'input de recherche
         if (this.searchInput) {
             this.searchInput.remove();
@@ -323,6 +326,7 @@ class TableBeautifuller {
                 header.removeEventListener("click", header._sortingHandler);
                 delete header._sortingHandler;
             }
+
             let arrow = header.querySelector(".sort-arrow");
             if (arrow) {
                 arrow.remove();
@@ -334,12 +338,12 @@ class TableBeautifuller {
             this.paginationWrapperTopContainer.remove();
         }
 
-        if (this.paginationWrapper) {
-            this.paginationWrapper.remove();
+        if (this.paginationWrapperBottomContainer) {
+            this.paginationWrapperBottomContainer.remove();
         }
 
         // Supprimer la ligne de recherche (filtres) dans l'en-tête
-        let searchRow = this.table.querySelector("thead tr:nth-child(2)"); // On suppose que c'est le deuxième <tr> dans le <thead>
+        let searchRow = this.table.querySelector(".thead-search");
         if (searchRow) {
             searchRow.remove();
         }

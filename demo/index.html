@@ -6,7 +6,7 @@
     <title>Table Beautifuler Demo</title>
     <script src="./script.js" defer></script>
 
-    <link rel="stylesheet" href="./../src/TableBeautifuller.css">
+    <link rel="stylesheet" href="./../src/TableBeautifuller.min.css">
     <script src="./../src/TableBeautifuller.js" defer></script>
 </head>
 <body>
@@ -18,7 +18,7 @@
                 <th data-search="combobox">Name</th>
                 <th data-search="input">Age</th>
                 <th data-search="combobox">Country</th>
-                <th data-search="combobox">Date de naissance</th>
+                <th>Date de naissance</th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +43,19 @@
         </tbody>
     </table>
 </div>
+
+
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+</style>
 
 </body>
 </html>
