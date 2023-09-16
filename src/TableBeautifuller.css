@@ -1,0 +1,110 @@
+* {
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    position: relative;
+}
+
+th {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.search-input {
+    display: block;
+    margin-bottom: 20px;
+    padding: 5px 10px;
+    float: right;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.sort-arrow {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: none; /* Caché par défaut */
+}
+
+.sorted-asc .sort-arrow, .sorted-desc .sort-arrow {
+    display: inline-block;
+}
+
+.sorted-asc .sort-arrow {
+    border-bottom: 5px solid black;
+}
+
+.sorted-desc .sort-arrow {
+    border-top: 5px solid black;
+}
+
+th > input, th > select {
+    margin-top: 5px;
+    padding: 5px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+th > input {
+    transition: 0.3s;
+}
+
+th > input:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+
+th > select {
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+th > select:hover {
+    border-color: #007BFF;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.pagination-controls, .pagination-wrapper-top, .pagination-wrapper-bottom {
+    display: flex;
+    align-items: center;
+}
+
+.pagination-info {
+    margin-right: auto;
+}
+
+.pagination-wrapper-top {
+    justify-content: flex-start;
+}
+
+.pagination-wrapper-bottom {
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.page-btn.active {
+    background-color: #007BFF;
+    color: white;
+}
