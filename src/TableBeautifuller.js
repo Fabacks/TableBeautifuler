@@ -3,11 +3,11 @@ class TableBeautifuller {
         this.table = document.getElementById(tableId);
 
         // Initialisation du trie par défaut
-        let orderString = this.table.getAttribute("data-order");
+        let orderString = options.order || this.table.getAttribute("data-order");
         this.initialOrder = orderString ? JSON.parse(orderString) : [];
 
         // Initialisation des valeurs pour la pagination
-        this.pageLength = parseInt(this.table.getAttribute("data-page-length")) || 15;
+        this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 15;
         this.currentPage = 1;
 
         this.init();
@@ -216,11 +216,7 @@ class TableBeautifuller {
     
         let rows = Array.from(this.table.querySelectorAll("tbody tr"));
         rows.forEach((row, idx) => {
-            if (idx < startIdx || idx >= endIdx) {
-                row.style.display = "none";
-            } else {
-                row.style.display = "";
-            }
+            row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
     
         let endDisplay = endIdx > totalRows ? totalRows : endIdx;
