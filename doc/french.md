@@ -54,6 +54,40 @@ Voici quelques méthodes que vous pourriez trouver utiles:
 
 - **destroy()**: Supprime toutes les fonctionnalités ajoutées par TableBeautifuller et ramène la table à son état d'origine.
 
+
+
+### Tri des colonnes
+
+Le tri est activé en cliquant sur les en-têtes de colonne. Par défaut, le tri sera effectué comme un tri de chaînes. Si la colonne contient des nombres, elle sera automatiquement triée comme une colonne numérique.
+
+### Trier avec des données spécifiques (`data-order`)
+
+Dans certains cas, vous souhaiterez peut-être trier une colonne en fonction d'une valeur qui ne correspond pas au texte visible. Par exemple, pour trier des dates dans un format spécifique ou pour trier en fonction d'une valeur cachée. Pour cela, utilisez l'attribut `data-order`.
+
+#### Exemple
+
+Supposons que vous ayez une colonne avec des dates sous forme textuelle, comme "12 Mars 1983". Toutefois, pour le tri, vous souhaiteriez utiliser un timestamp pour garantir un tri correct. Voici comment vous pourriez structurer votre table :
+
+```html
+<table data-sortable>
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Date de Naissance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Jean</td>
+            <td data-order="415532400">12 Mars 1983</td>
+        </tr>
+        <!-- ... autres lignes ... -->
+    </tbody>
+</table>
+```
+
+Dans cet exemple, bien que la date affichée soit "12 Mars 1983", la valeur utilisée pour le tri sera le timestamp `415532400`.
+
 ## Conclusion
 
 TableBeautifuller est une librairie puissante et flexible qui permet d'ajouter rapidement des fonctionnalités améliorées à vos tables HTML. Grâce à ses méthodes et options de configuration, vous pouvez personnaliser facilement le comportement et l'apparence de vos tables.

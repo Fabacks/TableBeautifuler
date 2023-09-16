@@ -121,9 +121,8 @@ class TableBeautifuller {
     }
 
     headerClickHandler(header, idx) {
-        let type = this.detectColumnType(idx);
         let sortDirection = header.dataset.sort === 'asc' ? 'desc' : 'asc';
-        this.sortTable(idx, type, sortDirection);
+        this.sortTable(idx, sortDirection);
         header.dataset.sort = sortDirection;
         this.updateArrows(header);
     }
@@ -142,7 +141,7 @@ class TableBeautifuller {
         let rows = this.table.querySelector("tbody").querySelectorAll("tr");
         for (let i = 0; i < rows.length; i++) {
             if (rows[i].cells[colIndex]) {
-                let content = rows[i].cells[colIndex].textContent.trim();
+                let content = rows[i].cells[colIndex].hasAttribute('data-order') ? rows[i].cells[colIndex].getAttribute('data-order') : rows[i].cells[colIndex].textContent.trim();
                 if (!isNaN(content)) {
                     return 'number';
                 }
@@ -151,11 +150,13 @@ class TableBeautifuller {
         return 'string';
     }
 
-    sortTable(colIndex, type, direction) {
+    sortTable(colIndex, direction) {
+        let type = this.detectColumnType(colIndex);
         let rows = Array.from(this.table.querySelector("tbody").querySelectorAll("tr"));
         rows.sort((a, b) => {
-            let A = a.cells[colIndex].textContent.trim();
-            let B = b.cells[colIndex].textContent.trim();
+            let A = a.cells[colIndex].hasAttribute('data-order') ? a.cells[colIndex].getAttribute('data-order') : a.cells[colIndex].textContent.trim();
+            let B = b.cells[colIndex].hasAttribute('data-order') ? b.cells[colIndex].getAttribute('data-order') : b.cells[colIndex].textContent.trim();
+
             if (type === 'number') {
                 return direction === 'asc' ? A - B : B - A;
             } else {
@@ -169,8 +170,7 @@ class TableBeautifuller {
     applyInitialOrder() {
         this.initialOrder.forEach(orderCriteria => {
             let [colIndex, direction] = orderCriteria;
-            let type = this.detectColumnType(colIndex);
-            this.sortTable(colIndex, type, direction.toLowerCase());
+            this.sortTable(colIndex, direction.toLowerCase());
 
             let header = this.table.querySelector(`th:nth-child(${colIndex + 1})`);
             header.dataset.sort = direction.toLowerCase();
