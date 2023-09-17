@@ -13,6 +13,9 @@ class TableBeautifuller {
         this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 15;
         this.currentPage = 1;
 
+        // Initialisation du debounce
+        this.debounce_delai = options.debounceDelai || 300;
+
         this.init();
     }
 
@@ -43,6 +46,16 @@ class TableBeautifuller {
         this.table.parentNode.insertBefore(this.paginationWrapperBottomContainer, this.table.nextSibling);
     }
 
+    debounce(func, delay) {
+        let debounceTimer;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+
     addSearchInput() {
         this.searchInput = document.createElement("input");
         this.searchInput.setAttribute("type", "text");
@@ -50,9 +63,9 @@ class TableBeautifuller {
         this.searchInput.className = "search-input";
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
-        this.searchInput.addEventListener("keyup", () => {
+        this.searchInput.addEventListener("keyup", this.debounce(() => {
             this.searchTable(null, this.searchInput.value);
-        });
+        }, this.debounce_delai));
     }
 
     addSearchColumn() {
@@ -68,9 +81,9 @@ class TableBeautifuller {
                 case "input":
                     let input = document.createElement('input');
                     input.type = "text";
-                    input.addEventListener('input', (e) => {
+                    input.addEventListener('input', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
-                    });
+                    }, this.debounce_delai));
                     cell.appendChild(input);
                 break;
                 case "combobox":
@@ -83,9 +96,10 @@ class TableBeautifuller {
                         option.textContent = val;
                         select.appendChild(option);
                     });
-                    select.addEventListener('change', (e) => {
+
+                    select.addEventListener('change', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
-                    });
+                    }, this.debounce_delai));
                     cell.appendChild(select);
                 break;
                 default:

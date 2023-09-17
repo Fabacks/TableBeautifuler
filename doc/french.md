@@ -24,6 +24,16 @@ let myTable = new TableBeautifuller("monTableauId", {
 });
 ```
 
+- **debounceDelai**: 
+
+Permet de définir un délais pour le debounce lors de la recherche. pAr default, il est de 300ms.
+
+```javascript
+let myTable = new TableBeautifuller("monTableauId", {
+    debounceDelai : 300
+});
+```
+
 ## Attributs de la table
 
 Certains attributs peuvent être ajoutés à votre table pour influencer le comportement de TableBeautifuller:
