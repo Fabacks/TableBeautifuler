@@ -494,15 +494,35 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+    // Mesurer la mémoire utilisée avant l'opération
+    const initialMemory = performance.memory.usedJSHeapSize;
+
+    // Lancement chrono
     console.time();
-    // Initialiser TableBeautifuller pour le tableau d'exemple
-    let table = new DataTable("demo-table");
 
-    // On peut détruire le tableau
-    // table.destroy(); 
+    for (let i = 0; i < 1000; i++) {
+        // Initialiser TableBeautifuller pour le tableau d'exemple
+        let table = new DataTable("demo-table");
 
+        // On peut détruire le tableau
+        table.destroy(); 
+    }
 
+    // Fin chrono
     console.timeEnd();
+
+    // Mesurer la mémoire utilisée après l'opération
+    const finalMemory = performance.memory.usedJSHeapSize;
+
+    // Calculer la différence et le ratio
+    const memoryDifference = (finalMemory - initialMemory) / 1024 / 1024; // en Mo
+    const memoryRatio = finalMemory / initialMemory;
+
+    console.log(`Mémoire initiale: ${initialMemory / 1024 / 1024} Mo`);
+    console.log(`Mémoire finale: ${finalMemory / 1024 / 1024} Mo`);
+    console.log(`Différence: ${memoryDifference} Mo`);
+    console.log(`Ratio: ${memoryRatio}`);
 });
 </script>
 
