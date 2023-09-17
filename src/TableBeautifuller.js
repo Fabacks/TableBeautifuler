@@ -329,6 +329,12 @@ class TableBeautifuller {
             }
         });
 
+        // Afficher toutes les lignes du tableau
+        let rows = this.table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            row.style.display = "";
+        });
+
         // Supprimer les éléments de pagination
         if (this.paginationWrapperTopContainer) {
             this.paginationWrapperTopContainer.remove();
