@@ -20,6 +20,18 @@ class TableBeautifuller {
         // Ajout de la classe "tableBeautifuller" à la table
         this.table.classList.add('tableBeautifuller');
 
+        this.createWrappers();
+        this.addSearchInput();
+        this.addSortingArrows();
+        if (this.columnSearch) {
+            this.addSearchColumn();
+        }
+        this.addPaginationControls();
+        this.applyInitialOrder();
+        this.paginate();
+    }
+
+    createWrappers() {
         // Création du wrapper "pagination-wrapper-top-container" au dessus du tableau
         this.paginationWrapperTopContainer = document.createElement('div');
         this.paginationWrapperTopContainer.classList.add('tableBeautifuller', 'pagination-wrapper-top-container');
@@ -29,15 +41,6 @@ class TableBeautifuller {
         this.paginationWrapperBottomContainer = document.createElement('div');
         this.paginationWrapperBottomContainer.classList.add('tableBeautifuller', 'pagination-wrapper-bottom-container');
         this.table.parentNode.insertBefore(this.paginationWrapperBottomContainer, this.table.nextSibling);
-
-        this.addSearchInput();
-        this.addSortingArrows();
-        if (this.columnSearch) {
-            this.addSearchRow();
-        }
-        this.addPaginationControls();
-        this.applyInitialOrder();
-        this.paginate();
     }
 
     addSearchInput() {
@@ -48,11 +51,11 @@ class TableBeautifuller {
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
         this.searchInput.addEventListener("keyup", () => {
-            this.searchTable(this.searchInput.value);
+            this.searchTable(null, this.searchInput.value);
         });
     }
 
-    addSearchRow() {
+    addSearchColumn() {
         let searchRow = document.createElement('tr');
         searchRow.classList.add("thead-search");
         let headers = this.table.querySelectorAll("th");
@@ -66,7 +69,7 @@ class TableBeautifuller {
                     let input = document.createElement('input');
                     input.type = "text";
                     input.addEventListener('input', (e) => {
-                        this.filterTable(header.cellIndex, e.target.value);
+                        this.searchTable(header.cellIndex, e.target.value);
                     });
                     cell.appendChild(input);
                 break;
@@ -81,7 +84,7 @@ class TableBeautifuller {
                         select.appendChild(option);
                     });
                     select.addEventListener('change', (e) => {
-                        this.filterTable(header.cellIndex, e.target.value);
+                        this.searchTable(header.cellIndex, e.target.value);
                     });
                     cell.appendChild(select);
                 break;
@@ -105,18 +108,6 @@ class TableBeautifuller {
             }
         });
         return values;
-    }
-
-    filterTable(colIndex, query) {
-        let rows = this.table.querySelector("tbody").querySelectorAll("tr");
-        rows.forEach(row => {
-            let cellValue = row.cells[colIndex].textContent.trim();
-            if (cellValue.includes(query) || query === "") {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
     }
 
     addSortingArrows() {
@@ -194,22 +185,41 @@ class TableBeautifuller {
         });
     }
 
-    searchTable(query) {
+    searchTable(colIndex, query) {
         let rows = this.table.querySelectorAll("tbody tr");
+
+        // Reset de la recherche
         rows.forEach(row => {
-            let cells = Array.from(row.getElementsByTagName("td"));
-            let rowText = cells.map(cell => cell.textContent).join(' ').toLowerCase();
+            row.dataset.matched = "true";
+            row.style.display = "";
+        });
+
+        // Recherche 
+        rows.forEach(row => {
+            let rowText = ""
+            if( colIndex != null ) {
+                rowText = row.cells[colIndex].textContent.trim().toLowerCase();
+            } else  {
+                let cells = Array.from(row.getElementsByTagName("td"));
+                rowText = cells.map(cell => cell.textContent).join(' ').toLowerCase();
+            }
 
             if (rowText.indexOf(query.toLowerCase()) !== -1) {
                 row.style.display = "";
+                row.dataset.matched = "true";
             } else {
                 row.style.display = "none";
+                row.dataset.matched = "false";
             }
         });
+
+        // Remise à zéro de la pagination et repagination avec les résultats filtrés
+        this.currentPage = 1;
+        this.paginate();
     }
 
     paginate() {
-        let totalRows = this.table.querySelectorAll("tbody tr").length;
+        let totalRows = Array.from(this.table.querySelectorAll("tbody tr")).filter(row => row.dataset.matched !== "false").length;
         let totalPages = Math.ceil(totalRows / this.pageLength);
 
         // Control display of previous & next buttons
@@ -219,7 +229,7 @@ class TableBeautifuller {
         let startIdx = (this.currentPage - 1) * this.pageLength;
         let endIdx = startIdx + this.pageLength;
 
-        let rows = Array.from(this.table.querySelectorAll("tbody tr"));
+        let rows = Array.from(this.table.querySelectorAll("tbody tr")).filter(row => row.dataset.matched !== "false");
         rows.forEach((row, idx) => {
             row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
