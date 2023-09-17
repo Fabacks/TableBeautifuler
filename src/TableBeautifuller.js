@@ -2,6 +2,9 @@ class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.getElementById(tableId);
 
+        // Initialisation de l'option columnSearch. Active par défaut
+        this.columnSearch = options.columnSearch !== undefined ? options.columnSearch : true; 
+
         // Initialisation du trie par défaut
         let orderString = options.order || this.table.getAttribute("data-order");
         this.initialOrder = orderString ? JSON.parse(orderString) : [];
@@ -29,7 +32,9 @@ class TableBeautifuller {
 
         this.addSearchInput();
         this.addSortingArrows();
-        this.addSearchRow();
+        if (this.columnSearch) {
+            this.addSearchRow();
+        }
         this.addPaginationControls();
         this.applyInitialOrder();
         this.paginate();
@@ -206,26 +211,26 @@ class TableBeautifuller {
     paginate() {
         let totalRows = this.table.querySelectorAll("tbody tr").length;
         let totalPages = Math.ceil(totalRows / this.pageLength);
-    
+
         // Control display of previous & next buttons
         this.prevButton.style.display = this.currentPage > 1 ? '' : 'none';
         this.nextButton.style.display = this.currentPage < totalPages ? '' : 'none';
-    
+
         let startIdx = (this.currentPage - 1) * this.pageLength;
         let endIdx = startIdx + this.pageLength;
-    
+
         let rows = Array.from(this.table.querySelectorAll("tbody tr"));
         rows.forEach((row, idx) => {
             row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
-    
+
         let endDisplay = endIdx > totalRows ? totalRows : endIdx;
         this.infoLabel.textContent = `Affichage de l'élément ${startIdx + 1} à ${endDisplay} sur ${totalRows} éléments`;
-    
+
         // Update displayed page buttons (just 5 for now)
         let startPage = Math.max(1, this.currentPage - 2);
         let endPage = Math.min(totalPages, this.currentPage + 2);
-    
+
         let pageButtons = this.paginationWrapperBottomContainer.querySelectorAll('.page-btn');
         pageButtons.forEach((btn, idx) => {
             let pageNumber = startPage + idx;
