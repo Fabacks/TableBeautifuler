@@ -493,17 +493,16 @@
     </table>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-
+document.addEventListener("DOMContentLoaded", () => {
     // Mesurer la mémoire utilisée avant l'opération
     const initialMemory = performance.memory.usedJSHeapSize;
 
     // Lancement chrono
     console.time();
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 10; i++) {
         // Initialiser TableBeautifuller pour le tableau d'exemple
-        let table = new DataTable("demo-table");
+        let table = new DataTable("#demo-table");
 
         // On peut détruire le tableau
         table.destroy(); 

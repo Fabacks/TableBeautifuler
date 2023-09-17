@@ -1,6 +1,6 @@
 class TableBeautifuller {
     constructor(tableId, options = {}) {
-        this.table = document.getElementById(tableId);
+        this.table = document.querySelector(tableId);
 
         // Initialisation de l'option columnSearch. Active par défaut
         this.columnSearch = options.columnSearch !== undefined ? options.columnSearch : true; 
@@ -50,7 +50,7 @@ class TableBeautifuller {
         // Création du wrapper "pagination-wrapper-bottom-container" en dessous du tableau
         this.paginationWrapperBottomContainer = document.createElement('div');
         this.paginationWrapperBottomContainer.classList.add('tableBeautifuller', 'pagination-wrapper-bottom-container');
-        this.table.parentNode.insertBefore(this.paginationWrapperBottomContainer, this.table.nextSibling);
+        this.table.parentNode.appendChild(this.paginationWrapperBottomContainer);
     }
 
     debounce(func, delay) {
@@ -219,12 +219,15 @@ class TableBeautifuller {
         rows.forEach(row => {
             let rowText = ""
             if( colIndex != null ) {
-                rowText = row.cells[colIndex].textContent.trim().toLowerCase();
+                rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
             } else  {
                 let cells = Array.from(row.getElementsByTagName("td"));
-                rowText = cells.map(cell => cell.textContent).join(' ').toLowerCase();
+                rowText = cells.map(cell => {
+                    return cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
+                }).join(' ');
             }
 
+            rowText = rowText.trim().toLowerCase();
             if (rowText.indexOf(query.toLowerCase()) !== -1) {
                 row.style.display = "";
                 row.dataset.matched = "true";
