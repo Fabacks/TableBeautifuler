@@ -9,9 +9,16 @@ class TableBeautifuller {
         let orderString = options.order || this.table.getAttribute("data-order");
         this.initialOrder = orderString ? JSON.parse(orderString) : [];
 
-        // Initialisation des valeurs pour la pagination
-        this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 15;
+        // Initialisation des valeurs pour la pagination (nombre item par page)
+        this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 10;
         this.currentPage = 1;
+
+        // Initialisation du nombre d'item par page dans le selector
+        this.selectItemPage = options.selectItemPage || [10, 20, 30];
+        if (!this.selectItemPage.includes(this.pageLength)) {
+            this.selectItemPage.push(this.pageLength);
+            this.selectItemPage.sort((a, b) => a - b);
+        }
 
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
@@ -71,8 +78,8 @@ class TableBeautifuller {
     addSearchColumn() {
         let searchRow = document.createElement('tr');
         searchRow.classList.add("thead-search");
-        let headers = this.table.querySelectorAll("th");
 
+        let headers = this.table.querySelectorAll("th");
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';
@@ -267,17 +274,20 @@ class TableBeautifuller {
     addPaginationControls() {
         this.paginationWrapperTop = document.createElement('div');
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
-    
+
         // Items per page select
         this.paginationInfoTop = document.createElement("span");
         this.paginationInfoTop.textContent = "Afficher ";
         this.paginationWrapperTop.appendChild(this.paginationInfoTop);
-    
+
         this.paginationSelect = document.createElement("select");
-        [10, 20, 30].forEach(num => {
+        this.selectItemPage.forEach(num => {
             let option = document.createElement("option");
             option.value = num;
             option.textContent = num;
+            if (num === this.pageLength) {
+                option.selected = true;
+            }
             this.paginationSelect.appendChild(option);
         });
         this.paginationSelect.value = this.pageLength;
