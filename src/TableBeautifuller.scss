@@ -61,6 +61,27 @@
         }
     }
 
+    // Coloration ligne parir et impair
+    &.tableRowsColors {
+        tbody {
+            tr:nth-child(odd) {
+                background-color: #f9f9f9;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dbdbdb;
+            }
+        }
+    }
+
+    // Coloration au survol
+    &.tableRowsHover {
+        tbody {
+            tr:hover {
+                background-color: #e6f2ff;
+            }
+        }
+    }
 }
 
 
@@ -86,7 +107,7 @@
 
 
 /** Partie : wrapper-bottom **/
-.tableBeautifuller.pagination-wrapper-bottom-container {
+.tableBeautifuller.pagination-down-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -99,9 +120,31 @@
     }
 
     .pagination-buttons-container {
-        .page-btn.active {
-            background-color: #007BFF;
-            color: white;
+        button {
+            padding: 5px 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: transparent;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+
+            &:hover {
+                background-color: #007BFF;
+                color: #FFF;
+            }
+
+            &.active {
+                background-color: #007BFF;
+                color: white;
+            }
+        }
+
+        button[disabled] {
+            cursor: not-allowed;
+            opacity: 0.5;
+            background-color: #cccccc;
+            pointer-events: none;
         }
     }
 }

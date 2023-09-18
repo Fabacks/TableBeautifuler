@@ -29,10 +29,6 @@ class TableBeautifuller {
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
 
-        this.init();
-    }
-
-    init() {
         // Ajout de la classe "tableBeautifuller" à la table
         this.table.classList.add('tableBeautifuller');
 
@@ -53,10 +49,10 @@ class TableBeautifuller {
         this.paginationWrapperTopContainer.classList.add('tableBeautifuller', 'pagination-wrapper-top-container');
         this.table.parentNode.insertBefore(this.paginationWrapperTopContainer, this.table);
 
-        // Création du wrapper "pagination-wrapper-bottom-container" en dessous du tableau
-        this.paginationWrapperBottomContainer = document.createElement('div');
-        this.paginationWrapperBottomContainer.classList.add('tableBeautifuller', 'pagination-wrapper-bottom-container');
-        this.table.parentNode.appendChild(this.paginationWrapperBottomContainer);
+        // Création du wrapper "pagination-down-container" en dessous du tableau
+        this.paginationWrapperDownContainer = document.createElement('div');
+        this.paginationWrapperDownContainer.classList.add('tableBeautifuller', 'pagination-down-container');
+        this.table.parentNode.appendChild(this.paginationWrapperDownContainer);
     }
 
     debounce(func, delay) {
@@ -140,13 +136,12 @@ class TableBeautifuller {
     addSortingArrows() {
         let headers = this.table.querySelectorAll("th");
         headers.forEach((header, idx) => {
-            header.dataset.sort = 'none'; // Initial state
+            header.dataset.sort = 'none';
 
             let arrow = document.createElement('span');
             arrow.classList.add('sort-arrow');
             header.appendChild(arrow);
 
-            // Créez un gestionnaire d'événements lié et stockez-le
             let boundHandler = this.headerClickHandler.bind(this, header, idx);
             header._sortingHandler = boundHandler;
 
@@ -254,8 +249,8 @@ class TableBeautifuller {
         let totalPages = Math.ceil(totalRows / this.pageLength);
 
         // Control display of previous & next buttons
-        this.prevButton.style.display = this.currentPage > 1 ? '' : 'none';
-        this.nextButton.style.display = this.currentPage < totalPages ? '' : 'none';
+        this.prevButton.disabled = this.currentPage <= 1;
+        this.nextButton.disabled = this.currentPage >= totalPages
 
         let startIdx = (this.currentPage - 1) * this.pageLength;
         let endIdx = startIdx + this.pageLength;
@@ -268,11 +263,10 @@ class TableBeautifuller {
         let endDisplay = endIdx > totalRows ? totalRows : endIdx;
         this.infoLabel.textContent = `Affichage de l'élément ${startIdx + 1} à ${endDisplay} sur ${totalRows} éléments`;
 
-        // Update displayed page buttons (just 5 for now)
         let startPage = Math.max(1, this.currentPage - 2);
         let endPage = Math.min(totalPages, this.currentPage + 2);
 
-        let pageButtons = this.paginationWrapperBottomContainer.querySelectorAll('.page-btn');
+        let pageButtons = this.paginationWrapperDownContainer.querySelectorAll('.page-btn');
         pageButtons.forEach((btn, idx) => {
             let pageNumber = startPage + idx;
             btn.textContent = pageNumber;
@@ -282,12 +276,12 @@ class TableBeautifuller {
     }
 
     addPaginationControls() {
+        // Items per page select
         this.paginationWrapperTop = document.createElement('div');
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
 
-        // Items per page select
         this.paginationInfoTop = document.createElement("span");
-        this.paginationInfoTop.textContent = "Afficher ";
+        this.paginationInfoTop.textContent = "Afficher";
         this.paginationWrapperTop.appendChild(this.paginationInfoTop);
 
         this.paginationSelect = document.createElement("select");
@@ -295,16 +289,14 @@ class TableBeautifuller {
             let option = document.createElement("option");
             option.value = num;
             option.textContent = num;
-            if (num === this.pageLength) {
-                option.selected = true;
-            }
+            option.selected = num === this.pageLength ? true : false;
             this.paginationSelect.appendChild(option);
         });
         this.paginationSelect.value = this.pageLength;
         this.paginationWrapperTop.appendChild(this.paginationSelect);
 
         this.paginationInfoTopAfter = document.createElement("span");
-        this.paginationInfoTopAfter.textContent = " éléments";
+        this.paginationInfoTopAfter.textContent = "éléments";
         this.paginationWrapperTop.appendChild(this.paginationInfoTopAfter);
 
         this.paginationWrapperTopContainer.appendChild(this.paginationWrapperTop);
@@ -312,18 +304,16 @@ class TableBeautifuller {
         // Information display
         this.infoLabel = document.createElement('span');
         this.infoLabel.className = 'pagination-info';
-        this.paginationWrapperBottomContainer.appendChild(this.infoLabel);
+        this.paginationWrapperDownContainer.appendChild(this.infoLabel);
 
-        // Création du wrapper "pagination-buttons-container"
+        // Create du wrapper "pagination-buttons-container" for boutton
         this.paginationButtonsContainer = document.createElement('div');
         this.paginationButtonsContainer.className = 'pagination-buttons-container';
 
-        // Previous & Next buttons and pages display
         this.prevButton = document.createElement('button');
         this.prevButton.textContent = 'Précédent';
         this.paginationButtonsContainer.appendChild(this.prevButton);
 
-        // Display pages (for simplicity we'll display five pages for now)
         for (let i = 1; i <= 5; i++) {
             let pageButton = document.createElement('button');
             pageButton.textContent = i;
@@ -338,9 +328,8 @@ class TableBeautifuller {
         this.nextButton = document.createElement('button');
         this.nextButton.textContent = 'Suivant';
         this.paginationButtonsContainer.appendChild(this.nextButton);
-        this.paginationWrapperBottomContainer.appendChild(this.paginationButtonsContainer);
+        this.paginationWrapperDownContainer.appendChild(this.paginationButtonsContainer);
 
-        // Event listeners
         this.paginationSelect.addEventListener("change", () => {
             this.pageLength = parseInt(this.paginationSelect.value);
             this.currentPage = 1;
@@ -384,13 +373,12 @@ class TableBeautifuller {
             row.style.display = "";
         });
 
-        // Supprimer les éléments de pagination
         if (this.paginationWrapperTopContainer) {
             this.paginationWrapperTopContainer.remove();
         }
 
-        if (this.paginationWrapperBottomContainer) {
-            this.paginationWrapperBottomContainer.remove();
+        if (this.paginationWrapperDownContainer) {
+            this.paginationWrapperDownContainer.remove();
         }
 
         // Supprimer la ligne de recherche (filtres) dans l'en-tête
