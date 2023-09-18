@@ -1,3 +1,18 @@
+/**
+ * TableBeautifuller
+ * 
+ * Author: Fabacks
+ * License: Free distribution except for commercial use
+ * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
+ * Version 0.8
+ * 
+ * This software is provided "as is" without any warranty. The author is
+ * not responsible for any damages or liabilities caused by the use of this software.
+ * Please do not use this software for commercial purposes without explicit permission from the author.
+ * If you use or distribute this software, please credit the author and link back to the GitHub repository.
+ */
+
+
 class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);

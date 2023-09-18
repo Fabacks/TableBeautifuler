@@ -10,6 +10,13 @@
 </head>
 <body>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    let table = new TableBeautifuller("#demo-table");
+    // table.destroy(); 
+});
+</script>
+
 <div class="table-container">
     <table id="demo-table" data-page-length="1" data-order='[[0, "ASC"]]'>
         <thead>
@@ -41,18 +48,7 @@
             </tr>
         </tbody>
     </table>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-    // Initialiser TableBeautifuller pour le tableau d'exemple
-    let table = new TableBeautifuller("#demo-table");
-
-    // On peut détruire le tableau
-    // table.destroy(); 
-
-});
-</script>
-
+</div>
 
 <style>
     * {

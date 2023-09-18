@@ -10,8 +10,20 @@
 </head>
 <body>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    let table = new TableBeautifuller("#demo-table", {
+        pageLength: 15,
+        selectItemPage: [1, 10, 20 , 30, 50],
+        order : [[1, 'ASC']]
+    });
+
+    // table.destroy();
+});
+</script>
+
 <div class="table-container">
-    <table id="demo-table" class="" data-page-length="10" data-order='[[0, "ASC"]]'>
+    <table id="demo-table" class="tableRowsColors tableRowsHover" data-page-length="10" data-order='[[0, "ASC"]]'>
         <thead>
             <tr>
                 <th data-search="combobox">Name</th>
@@ -491,25 +503,7 @@
             </tr>
         </tfoot>
     </table>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-    console.time();
-    // Initialiser TableBeautifuller pour le tableau d'exemple
-    let table = new TableBeautifuller("#demo-table", {
-        pageLength: 15,
-        selectItemPage: [1, 10, 20 , 30, 50],
-        order : [[1, 'ASC']]
-    });
-
-    // On peut détruire le tableau
-    // table.destroy(); 
-
-
-    console.timeEnd();
-});
-</script>
-
+</div>
 
 <style>
     * {
