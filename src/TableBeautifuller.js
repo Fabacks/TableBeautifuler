@@ -7,7 +7,13 @@ class TableBeautifuller {
 
         // Initialisation du trie par défaut
         let orderString = options.order || this.table.getAttribute("data-order");
-        this.initialOrder = orderString ? JSON.parse(orderString) : [];
+        if (typeof orderString === "string") {
+            this.initialOrder = JSON.parse(orderString);
+        } else if (Array.isArray(orderString)) {
+            this.initialOrder = orderString;
+        } else {
+            this.initialOrder = [];
+        }
 
         // Initialisation des valeurs pour la pagination (nombre item par page)
         this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 10;
