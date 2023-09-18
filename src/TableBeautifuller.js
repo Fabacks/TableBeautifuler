@@ -225,6 +225,7 @@ class TableBeautifuller {
         rows.forEach(row => {
             let rowText = ""
             if( colIndex != null ) {
+                let cell = row.cells[colIndex];
                 rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
             } else  {
                 let cells = Array.from(row.getElementsByTagName("td"));
