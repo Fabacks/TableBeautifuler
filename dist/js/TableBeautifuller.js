@@ -299,16 +299,26 @@ class TableBeautifuller {
             row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
 
-        let startPage = Math.max(1, this.currentPage - 2);
-        let endPage = Math.min(totalPages, this.currentPage + 2);
-
-        let pageButtons = this.paginationWrapperDownContainer.querySelectorAll('.page-btn');
-        pageButtons.forEach((btn, idx) => {
-            let pageNumber = startPage + idx;
-            btn.textContent = pageNumber;
-            btn.style.display = pageNumber <= endPage ? '' : 'none';
-            btn.classList.toggle('active', pageNumber === this.currentPage);
+        let buttonsDelete = this.paginationButtonsContainer.querySelectorAll('.page-btn');
+        buttonsDelete.forEach((button) => {
+            this.paginationButtonsContainer.removeChild(button);
         });
+
+        let startPage = Math.max(1, this.currentPage - 3);
+        let endPage = Math.min(totalPages, this.currentPage + 3) -1;
+
+        let lastChild = this.paginationButtonsContainer.lastElementChild;
+        for (let i = startPage-1; i <= endPage; i++) {
+            let pageNumber = startPage + i;
+            let btn = document.createElement('button');
+            btn.textContent = pageNumber;
+            btn.setAttribute('data-page', pageNumber);
+            btn.className = 'page-btn';
+            btn.classList.toggle('active', pageNumber === this.currentPage);
+
+            this.paginationButtonsContainer.insertBefore(btn, lastChild);
+        }
+
     }
 
     addInfoControls() {
@@ -349,21 +359,12 @@ class TableBeautifuller {
 
         this.prevButton = document.createElement('button');
         this.prevButton.textContent = 'Précédent';
+        this.prevButton.className = 'page-prev';
         this.paginationButtonsContainer.appendChild(this.prevButton);
-
-        for (let i = 1; i <= 5; i++) {
-            let pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.className = 'page-btn';
-            pageButton.addEventListener('click', () => {
-                this.currentPage = parseInt(pageButton.textContent);
-                this.paginate();
-            });
-            this.paginationButtonsContainer.appendChild(pageButton);
-        }
 
         this.nextButton = document.createElement('button');
         this.nextButton.textContent = 'Suivant';
+        this.nextButton.className = 'page-next';
         this.paginationButtonsContainer.appendChild(this.nextButton);
         this.paginationWrapperDownContainer.appendChild(this.paginationButtonsContainer);
 
@@ -373,13 +374,15 @@ class TableBeautifuller {
             this.paginate();
         });
 
-        this.prevButton.addEventListener('click', () => {
-            this.currentPage--;
-            this.paginate();
-        });
+        this.paginationButtonsContainer.addEventListener('click', (event) => {
+            let classList = event.target.classList;
+            if ( classList.contains('page-btn') )
+                this.currentPage = parseInt(event.target.getAttribute('data-page'));
+            else if (classList.contains('page-prev') )
+                this.currentPage--;
+            else if (classList.contains('page-next') )
+                this.currentPage++;
 
-        this.nextButton.addEventListener('click', () => {
-            this.currentPage++;
             this.paginate();
         });
     }
