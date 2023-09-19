@@ -34,6 +34,9 @@ class TableBeautifuller {
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
 
+        // Initialisez un objet pour suivre les filtres actifs
+        this.filters = {}; 
+
         this.createWrappers();
 
         if (this.displayBloc.searching ) {
@@ -57,7 +60,6 @@ class TableBeautifuller {
             this.addPaginationControls();
             this.paginate();
         }
-
     }
 
     createWrappers() {
@@ -228,6 +230,14 @@ class TableBeautifuller {
     }
 
     searchTable(colIndex, query) {
+        // Mise à jour de l'objet des filtres, on utilise 'global' comme clé pour une recherche globale
+        let key = colIndex === null || colIndex === undefined ? "global" : colIndex;
+        if (query.trim() != '') {
+            this.filters[key] = query.toLowerCase();
+        } else {
+            delete this.filters[key];
+        }
+
         let rows = this.table.querySelectorAll("tbody tr");
 
         // Reset de la recherche
@@ -236,26 +246,24 @@ class TableBeautifuller {
             row.style.display = "";
         });
 
-        // Recherche 
         rows.forEach(row => {
-            let rowText = ""
-            if( colIndex != null ) {
-                let cell = row.cells[colIndex];
-                rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
-            } else  {
-                let cells = Array.from(row.getElementsByTagName("td"));
-                rowText = cells.map(cell => {
-                    return cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
-                }).join(' ');
-            }
+            for (const [filterKey, filterQuery] of Object.entries(this.filters)) {
+                if (row.dataset.matched !== "true") 
+                    return;
 
-            rowText = rowText.trim().toLowerCase();
-            if (rowText.indexOf(query.toLowerCase()) !== -1) {
-                row.style.display = "";
-                row.dataset.matched = "true";
-            } else {
-                row.style.display = "none";
-                row.dataset.matched = "false";
+                let rowText = ""
+                if (filterKey !== 'global') {
+                    let cell = row.cells[parseInt(filterKey)];
+                    rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
+                } else {
+                    let cells = Array.from(row.getElementsByTagName("td"));
+                    rowText = Array.from(cells).map(cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent).join(' ');
+                }
+
+                if (rowText.trim().toLowerCase().indexOf(filterQuery) === -1) {
+                    row.style.display = "none";
+                    row.dataset.matched = "false";
+                }
             }
         });
 

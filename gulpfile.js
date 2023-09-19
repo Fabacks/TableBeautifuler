@@ -18,7 +18,7 @@ const banner = `/**
  * not responsible for any damages or liabilities caused by the use of this software.
  * Please do not use this software for commercial purposes without explicit permission from the author.
  * If you use or distribute this software, please credit the author and link back to the GitHub repository.
- */\n`;
+ */\n\n`;
 
 
 function js() {
