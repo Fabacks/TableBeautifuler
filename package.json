@@ -1,0 +1,35 @@
+{
+  "name": "tablebeautifuler",
+  "version": "0.8.0",
+  "description": "Welcome to TableBeautifuller, a JavaScript library designed to enhance your HTML tables with advanced features such as pagination, sorting, and searching.",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fabacks/TableBeautifuler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fabacks/TableBeautifuler/issues"
+  },
+  "homepage": "https://github.com/Fabacks/TableBeautifuler#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-terser": "^2.1.0",
+    "gulp-watch": "^5.0.1",
+    "sass": "^1.67.0"
+  }
+}
