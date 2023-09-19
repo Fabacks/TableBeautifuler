@@ -1,4 +1,4 @@
-const {src, dest, parallel, watch} = require('gulp');
+const {src, dest, parallel, series, watch} = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const terser = require('gulp-terser');
 const rename = require('gulp-rename');
@@ -18,7 +18,7 @@ const banner = `/**
  * not responsible for any damages or liabilities caused by the use of this software.
  * Please do not use this software for commercial purposes without explicit permission from the author.
  * If you use or distribute this software, please credit the author and link back to the GitHub repository.
- */\n\n\n`;
+ */\n`;
 
 
 function js() {
@@ -31,6 +31,16 @@ function js() {
         .pipe(dest('dist/js'));
 }
 
+function jsCopy() {
+    return src('src/*.js')
+        .pipe(header(banner))
+        .pipe(dest('dist/js'));
+}
+
+function jsWatch(cb) {
+    series(js, jsCopy)(cb);
+}
+
 function styles() {
     return src('src/*.scss')
         .pipe(sourcemaps.init())
@@ -41,17 +51,15 @@ function styles() {
         .pipe(dest('dist/css'));
 }
 
-function copyJs() {
-    return src('src/*.js')
-        .pipe(header(banner))
-        .pipe(dest('dist/js'));
-}
-
-function copyStyles() {
+function stylesCopy() {
     return src('src/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(header(banner))
         .pipe(dest('dist/css'));
+}
+
+function styleWatch(cb) {
+    series(styles, stylesCopy)(cb);
 }
 
 function languages() {
@@ -60,15 +68,15 @@ function languages() {
 }
 
 function watchFiles() {
-    watch('src/*.js', js);
-    watch('src/*.scss', styles);
+    watch('src/*.js', jsWatch);
+    watch('src/*.scss', styleWatch);
     watch('src/languages/*', languages);
 }
 
 exports.js = js;
 exports.styles = styles;
-exports.copyJs = copyJs;
-exports.copyStyles = copyStyles;
+exports.copyJs = jsCopy;
+exports.copyStyles = stylesCopy;
 exports.languages = languages;
 exports.watch = watchFiles;
-exports.default = parallel(js, styles, copyJs, copyStyles, languages);
+exports.default = parallel(js, styles, jsCopy, stylesCopy, languages);

@@ -17,8 +17,13 @@ class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);
 
-        // Initialisation de l'option columnSearch. Active par défaut
-        this.columnSearch = options.columnSearch !== undefined ? options.columnSearch : true; 
+        // Display
+        this.displayBloc = {};
+        this.displayBloc.info = options.info ?? true;
+        this.displayBloc.ordering = options.ordering ?? true;
+        this.displayBloc.paging = options.paging ?? true;
+        this.displayBloc.searching = options.searching ?? true;
+        this.displayBloc.columnSearch = options.columnSearch ?? true;
 
         // Initialisation du trie par défaut
         let orderString = options.order || this.table.getAttribute("data-order");
@@ -44,21 +49,36 @@ class TableBeautifuller {
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
 
-        // Ajout de la classe "tableBeautifuller" à la table
-        this.table.classList.add('tableBeautifuller');
-
         this.createWrappers();
-        this.addSearchInput();
-        this.addSortingArrows();
-        if (this.columnSearch) {
+
+        if (this.displayBloc.searching ) {
+            this.addSearchInput();
+        }
+
+        if (this.displayBloc.ordering) {
+            this.addSortingArrows();
+            this.applyInitialOrder();
+        }
+
+        if (this.displayBloc.columnSearch) {
             this.addSearchColumn();
         }
-        this.addPaginationControls();
-        this.applyInitialOrder();
-        this.paginate();
+
+        if (this.displayBloc.info) {
+            this.addInfoControls();
+        }
+
+        if (this.displayBloc.paging) {
+            this.addPaginationControls();
+            this.paginate();
+        }
+
     }
 
     createWrappers() {
+        // Ajout de la classe "tableBeautifuller" à la table
+        this.table.classList.add('tableBeautifuller');
+
         // Création du wrapper "pagination-wrapper-top-container" au dessus du tableau
         this.paginationWrapperTopContainer = document.createElement('div');
         this.paginationWrapperTopContainer.classList.add('tableBeautifuller', 'pagination-wrapper-top-container');
@@ -262,21 +282,22 @@ class TableBeautifuller {
     paginate() {
         let totalRows = Array.from(this.table.querySelectorAll("tbody tr")).filter(row => row.dataset.matched !== "false").length;
         let totalPages = Math.ceil(totalRows / this.pageLength);
+        let startIdx = (this.currentPage - 1) * this.pageLength;
+        let endIdx = startIdx + this.pageLength;
+
+        if( this.displayBloc.info) {
+            let endDisplay = endIdx > totalRows ? totalRows : endIdx;
+            this.infoLabel.textContent = `Affichage de l'élément ${startIdx + 1} à ${endDisplay} sur ${totalRows} éléments`;
+        }
 
         // Control display of previous & next buttons
         this.prevButton.disabled = this.currentPage <= 1;
         this.nextButton.disabled = this.currentPage >= totalPages
 
-        let startIdx = (this.currentPage - 1) * this.pageLength;
-        let endIdx = startIdx + this.pageLength;
-
         let rows = Array.from(this.table.querySelectorAll("tbody tr")).filter(row => row.dataset.matched !== "false");
         rows.forEach((row, idx) => {
             row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
-
-        let endDisplay = endIdx > totalRows ? totalRows : endIdx;
-        this.infoLabel.textContent = `Affichage de l'élément ${startIdx + 1} à ${endDisplay} sur ${totalRows} éléments`;
 
         let startPage = Math.max(1, this.currentPage - 2);
         let endPage = Math.min(totalPages, this.currentPage + 2);
@@ -288,6 +309,12 @@ class TableBeautifuller {
             btn.style.display = pageNumber <= endPage ? '' : 'none';
             btn.classList.toggle('active', pageNumber === this.currentPage);
         });
+    }
+
+    addInfoControls() {
+        this.infoLabel = document.createElement('span');
+        this.infoLabel.className = 'pagination-info';
+        this.paginationWrapperDownContainer.appendChild(this.infoLabel);
     }
 
     addPaginationControls() {
@@ -315,11 +342,6 @@ class TableBeautifuller {
         this.paginationWrapperTop.appendChild(this.paginationInfoTopAfter);
 
         this.paginationWrapperTopContainer.appendChild(this.paginationWrapperTop);
-
-        // Information display
-        this.infoLabel = document.createElement('span');
-        this.infoLabel.className = 'pagination-info';
-        this.paginationWrapperDownContainer.appendChild(this.infoLabel);
 
         // Create du wrapper "pagination-buttons-container" for boutton
         this.paginationButtonsContainer = document.createElement('div');
