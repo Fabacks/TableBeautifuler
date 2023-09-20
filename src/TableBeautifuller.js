@@ -10,6 +10,10 @@ class TableBeautifuller {
         this.displayBloc.searching = options.searching ?? true;
         this.displayBloc.columnSearch = options.columnSearch ?? true;
 
+        // Options
+        this.options = {};
+        this.options.temperature = parseInt(options.temperature) || 1;
+
         // Initialisation du trie par défaut
         let orderString = options.order || this.table.getAttribute("data-order");
         if (typeof orderString === "string") {
@@ -230,6 +234,8 @@ class TableBeautifuller {
     }
 
     searchTable(colIndex, query) {
+        query = query.trim();
+
         // Mise à jour de l'objet des filtres, on utilise 'global' comme clé pour une recherche globale
         let key = colIndex === null || colIndex === undefined ? "global" : colIndex;
         if (query.trim() != '') {
@@ -260,7 +266,8 @@ class TableBeautifuller {
                     rowText = Array.from(cells).map(cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent).join(' ');
                 }
 
-                if (rowText.trim().toLowerCase().indexOf(filterQuery) === -1) {
+                rowText = rowText.trim().toLowerCase();
+                if ( !this.matchesUsingLevenshtein(rowText, filterQuery, this.options.temperature) ){
                     row.style.display = "none";
                     row.dataset.matched = "false";
                 }
@@ -270,6 +277,54 @@ class TableBeautifuller {
         // Remise à zéro de la pagination et repagination avec les résultats filtrés
         this.currentPage = 1;
         this.paginate();
+    }
+
+    matchesUsingLevenshtein(rowText, filterQuery, temperature) {
+        if ( rowText.indexOf(filterQuery) !== -1) {
+            return true;
+        }
+
+        if( temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
+            return false;
+        }
+
+        for (let i = 0; i <= rowText.length - filterQuery.length; i++) {
+            let sub = rowText.substring(i, i + filterQuery.length);
+            if (this.levenshteinDistance(sub, filterQuery) <= temperature) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    levenshteinDistance(a, b) {
+        const matrix = [];
+        let i, j;
+
+        for (i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+
+        for (j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+
+        for (i = 1; i <= b.length; i++) {
+            for (j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
     }
 
     paginate() {

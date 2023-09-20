@@ -109,6 +109,16 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
+- **temperature**: 
+Permet spécifier la distance pour algorithme de Levenshtein lors de la recherche. Par défaut à 1 si non spécifié. [voir ici pour plus d'explication](#recherche_levenshtein)
+
+```javascript
+let myTable = new TableBeautifuller("myTable", {
+    temperature: 2
+});
+```
+
+
 - **debounceDelai**: 
 
 Permet de définir un délais pour le debounce lors de la recherche. Par default  300ms si non spécifié.
@@ -176,7 +186,9 @@ Le tri est activé en cliquant sur les en-têtes de colonne. Par défaut, le tri
 
 Dans certains cas, vous souhaiterez peut-être trier une colonne en fonction d'une valeur qui ne correspond pas au texte visible. Par exemple, pour trier des dates dans un format spécifique ou pour trier en fonction d'une valeur cachée. Pour cela, utilisez l'attribut `data-order`.
 
-### Exemple
+
+
+#### Exemple
 
 Supposons que vous ayez une colonne avec des dates sous forme textuelle, comme "12 Mars 1983". Toutefois, pour le tri, vous souhaiteriez utiliser un timestamp pour garantir un tri correct. Voici comment vous pourriez structurer votre table :
 
@@ -199,6 +211,18 @@ Supposons que vous ayez une colonne avec des dates sous forme textuelle, comme "
 ```
 
 Dans cet exemple, bien que la date affichée soit "12 Mars 1983", la valeur utilisée pour le tri sera le timestamp `415532400`.
+
+
+### Trier avec l'algorithme de Levenshtein <a id="recherche_levenshtein"></a>
+
+L'algorithme de Levenshtein mesure la distance entre deux chaînes de caractères en comptant le nombre minimal de modifications (insertions, suppressions ou substitutions) pour transformer une chaîne en une autre.
+
+L'algorithme fonctionne uniquement si :
+ - La "temperature" est supérieur à 0
+ - Il y a plus de 4 caractères de recherche 
+ - La cellule et la recherche soit uniquement du texte.
+ 
+Attention : Sur de grosse quantité de données, cela peut réduire les performances. Pour désactiver l'algorithme de Levenshtein, il suffit de mettre la "temperature" à 0.
 
 
 ## Stylisation du tableau
