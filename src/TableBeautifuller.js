@@ -161,7 +161,8 @@ class TableBeautifuller {
         let values = [];
         let rows = this.table.querySelector("tbody").querySelectorAll("tr");
         rows.forEach(row => {
-            let value = row.cells[colIndex].textContent.trim();
+            let cell = row.cells[colIndex];
+            let value = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent.trim();
             if (!values.includes(value)) {
                 values.push(value);
             }

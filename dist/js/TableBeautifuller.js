@@ -175,7 +175,8 @@ class TableBeautifuller {
         let values = [];
         let rows = this.table.querySelector("tbody").querySelectorAll("tr");
         rows.forEach(row => {
-            let value = row.cells[colIndex].textContent.trim();
+            let cell = row.cells[colIndex];
+            let value = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent.trim();
             if (!values.includes(value)) {
                 values.push(value);
             }
@@ -191,9 +192,6 @@ class TableBeautifuller {
             let arrow = document.createElement('span');
             arrow.classList.add('sort-arrow');
             header.appendChild(arrow);
-
-            // let boundHandler = this.headerClickHandler.bind(this, header, idx);
-            // header._sortingHandler = boundHandler;
 
             this.addEventList(header, 'click', this.headerClickHandler.bind(this, header, idx));
         });
