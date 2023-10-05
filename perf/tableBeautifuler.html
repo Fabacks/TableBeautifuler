@@ -499,9 +499,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialMemory = performance.memory.usedJSHeapSize;
 
     // Lancement chrono
-    console.time();
+    const start = performance.now();
+    const nbExcec = 1000;
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < nbExcec; i++) {
         // Initialiser TableBeautifuller pour le tableau d'exemple
         let table = new TableBeautifuller("#demo-table");
 
@@ -510,7 +511,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Fin chrono
-    console.timeEnd();
+    const end = performance.now();
+    const duration = end - start;
+    const averageDuration = duration / nbExcec;
 
     // Mesurer la mémoire utilisée après l'opération
     const finalMemory = performance.memory.usedJSHeapSize;
@@ -519,6 +522,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const memoryDifference = (finalMemory - initialMemory) / 1024 / 1024; // en Mo
     const memoryRatio = finalMemory / initialMemory;
 
+    console.log(`Nombre d'exécutions : ${nbExcec}`);
+    console.log(`Durée d'exécution : ${duration}ms`);
+    console.log(`Durée moyenne par exécution: ${averageDuration}ms`);
     console.log(`Mémoire initiale: ${initialMemory / 1024 / 1024} Mo`);
     console.log(`Mémoire finale: ${finalMemory / 1024 / 1024} Mo`);
     console.log(`Différence: ${memoryDifference} Mo`);
