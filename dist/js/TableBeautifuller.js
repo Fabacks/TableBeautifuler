@@ -15,6 +15,7 @@
 class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);
+        this.eventList = [];
 
         // Display
         this.displayBloc = {};
@@ -105,6 +106,14 @@ class TableBeautifuller {
         };
     }
 
+    addEventList(element, eventName, listener) {
+        // Ajouter l'écouteur d'événement à l'élément
+        element.addEventListener(eventName, listener);
+
+        // Stocker l'élément, l'événement et la fonction d'écouteur liée dans eventList
+        this.eventList.push({element, eventName, listener});
+    }
+
     addSearchInput() {
         this.searchInput = document.createElement("input");
         this.searchInput.setAttribute("type", "text");
@@ -112,9 +121,9 @@ class TableBeautifuller {
         this.searchInput.className = "search-input";
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
-        this.searchInput.addEventListener("keyup", this.debounce(() => {
+        this.addEventList(this.searchInput, 'keyup', this.debounce(() => {
             this.searchTable(null, this.searchInput.value);
-        }, this.debounce_delai));
+        }, this.debounce_delai).bind(this));
     }
 
     addSearchColumn() {
@@ -130,9 +139,10 @@ class TableBeautifuller {
                 case "input":
                     let input = document.createElement('input');
                     input.type = "text";
-                    input.addEventListener('input', this.debounce((e) => {
+
+                    this.addEventList(input, 'input', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
-                    }, this.debounce_delai));
+                    }, this.debounce_delai).bind(this));
                     cell.appendChild(input);
                 break;
                 case "combobox":
@@ -146,9 +156,9 @@ class TableBeautifuller {
                         select.appendChild(option);
                     });
 
-                    select.addEventListener('change', this.debounce((e) => {
+                    this.addEventList(select, 'change', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
-                    }, this.debounce_delai));
+                    }, this.debounce_delai).bind(this));
                     cell.appendChild(select);
                 break;
                 default:
@@ -182,10 +192,10 @@ class TableBeautifuller {
             arrow.classList.add('sort-arrow');
             header.appendChild(arrow);
 
-            let boundHandler = this.headerClickHandler.bind(this, header, idx);
-            header._sortingHandler = boundHandler;
+            // let boundHandler = this.headerClickHandler.bind(this, header, idx);
+            // header._sortingHandler = boundHandler;
 
-            header.addEventListener("click", boundHandler);
+            this.addEventList(header, 'click', this.headerClickHandler.bind(this, header, idx));
         });
     }
 
@@ -430,13 +440,13 @@ class TableBeautifuller {
         this.paginationButtonsContainer.appendChild(this.nextButton);
         this.paginationWrapperDownContainer.appendChild(this.paginationButtonsContainer);
 
-        this.paginationSelect.addEventListener("change", () => {
+        this.addEventList(this.paginationSelect, 'change', (() => {
             this.pageLength = parseInt(this.paginationSelect.value);
             this.currentPage = 1;
             this.paginate();
-        });
+        }).bind(this));
 
-        this.paginationButtonsContainer.addEventListener('click', (event) => {
+        this.addEventList(this.paginationButtonsContainer, 'click', ((event) => {
             let classList = event.target.classList;
             if ( classList.contains('page-btn') )
                 this.currentPage = parseInt(event.target.getAttribute('data-page'));
@@ -446,23 +456,18 @@ class TableBeautifuller {
                 this.currentPage++;
 
             this.paginate();
-        });
+        }).bind(this));
     }
 
     destroy() {
-        // Supprimer l'input de recherche
-        if (this.searchInput) {
-            this.searchInput.remove();
-        }
+        // Supprimer tous les écouteurs d'événements
+        this.eventList.forEach(({ element, eventName, listener }) => {
+            element.removeEventListener(eventName, listener);
+        });
 
-        // Supprimer les flèches de tri et les gestionnaires d'événements
+        // Supprimer les flèches de tri
         let headers = this.table.querySelectorAll("th");
         headers.forEach(header => {
-            if (header._sortingHandler) {
-                header.removeEventListener("click", header._sortingHandler);
-                delete header._sortingHandler;
-            }
-
             let arrow = header.querySelector(".sort-arrow");
             if (arrow) {
                 arrow.remove();
@@ -475,10 +480,12 @@ class TableBeautifuller {
             row.style.display = "";
         });
 
+        // Supprime le wrapper au dessus du tableau
         if (this.paginationWrapperTopContainer) {
             this.paginationWrapperTopContainer.remove();
         }
 
+        // Supprime le wrapper en dessosu du tableau 
         if (this.paginationWrapperDownContainer) {
             this.paginationWrapperDownContainer.remove();
         }
@@ -487,6 +494,13 @@ class TableBeautifuller {
         let searchRow = this.table.querySelector(".thead-search");
         if (searchRow) {
             searchRow.remove();
+        }
+
+        // Parcourir tous les attributs de l'objet et les définir à null
+        for (let attribut in this) {
+            if (this.hasOwnProperty(attribut)) {
+            this[attribut] = null;
+            }
         }
     }
 }
