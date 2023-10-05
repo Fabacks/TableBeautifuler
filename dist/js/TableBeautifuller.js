@@ -116,6 +116,7 @@ class TableBeautifuller {
 
     addSearchInput() {
         this.searchInput = document.createElement("input");
+        this.searchInput.title = "Search in global table";
         this.searchInput.setAttribute("type", "text");
         this.searchInput.setAttribute("placeholder", "Recherche...");
         this.searchInput.className = "search-input";
@@ -134,11 +135,14 @@ class TableBeautifuller {
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';
+            let colName = "Search for " + (header.innerHTML.indexOf('<span') !== -1 ? header.innerHTML.substring(0, header.innerHTML.indexOf('<span')).trim() : header.innerText);
 
             switch (searchType) {
                 case "input":
                     let input = document.createElement('input');
                     input.type = "text";
+                    input.title = colName;
+                    input.placeholder = "Rechercher dans la colonne...";
 
                     this.addEventList(input, 'input', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
@@ -147,6 +151,7 @@ class TableBeautifuller {
                 break;
                 case "combobox":
                     let select = document.createElement('select');
+                    select.title = colName;
                     let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex);
                     select.innerHTML = `<option value="">Tout</option>`;
                     uniqueValues.forEach(val => {
@@ -407,6 +412,7 @@ class TableBeautifuller {
         this.paginationWrapperTop.appendChild(this.paginationInfoTop);
 
         this.paginationSelect = document.createElement("select");
+        this.paginationSelect.title = "List for numbers items display";
         this.selectItemPage.forEach(num => {
             let option = document.createElement("option");
             option.value = num;
