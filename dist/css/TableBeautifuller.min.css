@@ -51,9 +51,6 @@
 .tableBeautifuller thead th > select:hover {
   border-color: #007BFF;
 }
-.tableBeautifuller tbody tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
 .tableBeautifuller.tableRowsColors tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
@@ -102,7 +99,7 @@
 }
 .tableBeautifuller.pagination-down-container .pagination-buttons-container button:hover {
   background-color: #007BFF;
-  color: #FFF;
+  color: white;
 }
 .tableBeautifuller.pagination-down-container .pagination-buttons-container button.active {
   background-color: #007BFF;

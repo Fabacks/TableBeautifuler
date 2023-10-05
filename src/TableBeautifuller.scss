@@ -1,7 +1,22 @@
+// Varaible color 
+$borderColor: #ddd;
+$borderFocusColor: #007BFF;
+$inputBorder: #ccc;
+$hoverRowColor: #e6f2ff;
+$oddRowColor: #f9f9f9;
+$evenRowColor: #dbdbdb;
+$buttonColor: #333;
+$buttonHoverBg: #007BFF;
+$buttonDisabledBg: #cccccc;
+$buttonActiveColor: white;
+$backgroundWhite: #fff;
+
+
+
 /** Partie : table **/
 .tableBeautifuller {
     th, td {
-        border: 1px solid #ddd;
+        border: 1px solid $borderColor;
         padding: 8px 12px;
         position: relative;
     }
@@ -32,7 +47,7 @@
             }
 
             > input:focus {
-                border-color: #007BFF;
+                border-color: $borderFocusColor;
                 box-shadow: 0 0 5px rgba(0,123,255,0.5);
             }
 
@@ -44,26 +59,20 @@
             }
 
             > select:hover {
-                border-color: #007BFF;
+                border-color: $borderFocusColor;
             }
         }
     }
 
-    tbody {
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    }
-
-    // Coloration ligne parir et impair
+    // Coloration ligne pair et impair
     &.tableRowsColors {
         tbody {
             tr:nth-child(odd) {
-                background-color: #f9f9f9;
+                background-color: $oddRowColor;
             }
 
             tr:nth-child(even) {
-                background-color: #dbdbdb;
+                background-color: $evenRowColor;
             }
         }
     }
@@ -72,7 +81,7 @@
     &.tableRowsHover {
         tbody {
             tr:hover {
-                background-color: #e6f2ff;
+                background-color: $hoverRowColor;
             }
         }
     }
@@ -94,7 +103,7 @@
         margin-bottom: 20px;
         padding: 5px 10px;
         float: right;
-        border: 1px solid #ccc;
+        border: 1px solid $inputBorder;
         border-radius: 4px;
     }
 }
@@ -116,28 +125,28 @@
     .pagination-buttons-container {
         button {
             padding: 5px 15px;
-            border: 1px solid #ccc;
+            border: 1px solid $inputBorder;
             border-radius: 3px;
             background-color: transparent;
-            color: #333;
+            color: $buttonColor;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
 
             &:hover {
-                background-color: #007BFF;
-                color: #FFF;
+                background-color: $buttonHoverBg;
+                color: $buttonActiveColor;
             }
 
             &.active {
-                background-color: #007BFF;
-                color: white;
+                background-color: $buttonHoverBg;
+                color: $buttonActiveColor;
             }
         }
 
         button[disabled] {
             cursor: not-allowed;
             opacity: 0.5;
-            background-color: #cccccc;
+            background-color: $buttonDisabledBg;
             pointer-events: none;
         }
     }
