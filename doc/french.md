@@ -12,6 +12,17 @@ Pour initialiser TableBeautifuller, vous avez besoin d'une table HTML du tableau
 let myTable = new TableBeautifuller("#myTable");
 ```
 
+## Utilisation des Plugins
+
+`tableBeautifuller` permet l'utilisation de plugins pour étendre ses fonctionnalités. Pour ajouter un plugin, vous devez utiliser la méthode `use` comme dans l'exemple suivant avec le plugin `TableBeautifullerExport` :
+
+```javascript
+table.use(new TableBeautifullerExport({
+    exportCSV: true, 
+    copy: true
+}));
+```
+
 ## Méthodes principales
 
 Voici quelques méthodes que vous pourriez trouver utiles:
@@ -241,6 +252,21 @@ Pour afficher une couleur par défaut lors du survol d'une ligne, il faut rajout
 
 ```html
 <table id="myTable" class="tableRowsHover">
+```
+
+## Plugins : 
+### TableBeautifullerExport
+Ce plugin ajoute des fonctionnalités d'exportation à vos tables. Il introduit deux boutons :
+
+ - "Copier" : pour copier les données de la table dans le presse-papier.
+ - "CSV" : pour exporter les données de la table en format CSV.
+
+Vous pouvez activer ou désactiver ces boutons en les configurant dans le constructeur du plugin :
+```javascript
+table.use(new TableBeautifullerExport({
+    exportCSV: true, 
+    copy: true
+}));
 ```
 
 ## Conclusion

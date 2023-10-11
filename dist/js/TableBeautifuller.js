@@ -4,7 +4,7 @@
  * Author: Fabacks
  * License: Free distribution except for commercial use
  * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
- * Version 0.9.0
+ * Version 0.9.1
  * 
  * This software is provided "as is" without any warranty. The author is
  * not responsible for any damages or liabilities caused by the use of this software.
@@ -16,6 +16,7 @@ class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);
         this.eventList = [];
+        this.plugins = [];
 
         // Display
         this.displayBloc = {};
@@ -79,6 +80,11 @@ class TableBeautifuller {
             this.addPaginationControls();
             this.paginate();
         }
+    }
+
+    use(plugin) {
+        plugin.install(this);
+        this.plugins.push(plugin);
     }
 
     createWrappers() {

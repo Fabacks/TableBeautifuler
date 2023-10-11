@@ -2,6 +2,7 @@ class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);
         this.eventList = [];
+        this.plugins = [];
 
         // Display
         this.displayBloc = {};
@@ -65,6 +66,11 @@ class TableBeautifuller {
             this.addPaginationControls();
             this.paginate();
         }
+    }
+
+    use(plugin) {
+        plugin.install(this);
+        this.plugins.push(plugin);
     }
 
     createWrappers() {

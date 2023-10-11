@@ -4,6 +4,7 @@ const terser = require('gulp-terser');
 const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const header = require('gulp-header');
+const cleanCSS = require('gulp-clean-css');
 
 const package = require('./package.json');
 const banner = `/**
@@ -23,11 +24,11 @@ const banner = `/**
 
 function js() {
     return src('src/*.js')
-        .pipe(sourcemaps.init())
+        // .pipe(sourcemaps.init())
         .pipe(terser())
         .pipe(header(banner))
         .pipe(rename({ extname: '.min.js' }))
-        .pipe(sourcemaps.write('.'))
+        // .pipe(sourcemaps.write('.'))
         .pipe(dest('dist/js'));
 }
 
@@ -37,17 +38,37 @@ function jsCopy() {
         .pipe(dest('dist/js'));
 }
 
+function jsPlugins() {
+    return src('src/plugins/*.js')
+        .pipe(sourcemaps.init())
+        .pipe(terser())
+        .pipe(header(banner))
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(dest('dist/js/plugins'));
+}
+
+function jsCopyPlugins() {
+    return src('src/plugins/*.js')
+        .pipe(header(banner))
+        .pipe(dest('dist/js/plugins'));
+}
+
 function jsWatch(cb) {
-    series(js, jsCopy)(cb);
+    series(js, jsCopy, jsPlugins, jsCopyPlugins)(cb);
+}
+
+function jsWatchPlugins(cb) {
+    series(jsPlugins, jsCopyPlugins)(cb);
 }
 
 function styles() {
     return src('src/*.scss')
-        .pipe(sourcemaps.init())
-        .pipe(header(banner))
+        // .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
+        .pipe(cleanCSS())
+        .pipe(header(banner))
         .pipe(rename({ extname: '.min.css' }))
-        .pipe(sourcemaps.write('.'))
+        // .pipe(sourcemaps.write('.'))
         .pipe(dest('dist/css'));
 }
 
@@ -69,6 +90,7 @@ function languages() {
 
 function watchFiles() {
     watch('src/*.js', jsWatch);
+    watch('src/plugins/*.js', jsWatchPlugins);
     watch('src/*.scss', styleWatch);
     watch('src/languages/*', languages);
 }
@@ -79,4 +101,4 @@ exports.copyJs = jsCopy;
 exports.copyStyles = stylesCopy;
 exports.languages = languages;
 exports.watch = watchFiles;
-exports.default = parallel(js, styles, jsCopy, stylesCopy, languages);
+exports.default = parallel(js, styles, jsCopy, jsPlugins, jsCopyPlugins, stylesCopy, languages);

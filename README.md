@@ -1,11 +1,30 @@
 # TableBeautifuller (English Version)
 
 Welcome to TableBeautifuller, a JavaScript library designed to enhance your HTML tables with advanced features such as pagination, sorting, and searching.
+If the features provided do not meet your specific requirements, we recommend using `Datatable.js` for more advanced functionalities.
+However, `tableBeautifuller` supports extending its functionalities through plugins.
+If you require features that are not currently available, you can submit a ticket, and we will consider adding it after review.
 
 ## Features
 - Pagination for long tables.
 - Sorting columns in ascending or descending order.
 - A search bar to filter rows based on input.
+
+
+# Performance Comparison: tableBeautifuller vs Datatable
+
+This document provides a detailed performance comparison between `tableBeautifuller` and `Datatable`. The tests were conducted over 3000 executions.
+
+## Comparative Table
+
+| Metric                         | tableBeautifuller         | Datatable               |
+|--------------------------------|---------------------------|-------------------------|
+| Number of executions           | 3000                      | 3000                    |
+| Execution time (ms)            | 4083.40                   | 142709.70               |
+| Average time/execution (ms)    | 1.36                      | 47.57                   |
+
+As seen in the table above, `tableBeautifuller` outperforms `Datatable` in terms of execution time, being significantly faster over 3000 runs.
+
 
 ## Installation
 
@@ -41,16 +60,42 @@ let myTable = new TableBeautifuller("#myTable");
 
 For a comprehensive guide and detailed instructions, refer to our [documentation](./doc/english.md).
 
+
+
+
 ---
+
+
+
 
 # TableBeautifuller (Version Française)
 
 Bienvenue sur TableBeautifuller, une bibliothèque JavaScript conçue pour embellir vos tables HTML avec des fonctionnalités avancées telles que la pagination, le tri et la recherche.
+Si les fonctionnalités fournies ne répondent pas à vos exigences spécifiques, nous vous recommandons d'utiliser `Datatable.js` pour des fonctionnalités plus avancées.
+Cependant, `tableBeautifuller` permet l'extension de ses fonctionnalités via des plugins. 
+Si vous avez besoin de fonctionnalités qui ne sont pas actuellement disponibles, vous pouvez soumettre un ticket, et nous examinerons la possibilité de l'ajouter après évaluation.
 
 ## Caractéristiques
 - Pagination pour les tables longues.
 - Tri des colonnes par ordre croissant ou décroissant.
 - Une barre de recherche pour filtrer les lignes selon l'input.
+
+
+# Comparaison des Performances : tableBeautifuller vs Datatable
+
+Ce document fournit une comparaison détaillée des performances entre `tableBeautifuller` et `Datatable`. Les tests ont été effectués sur 3000 exécutions.
+
+## Tableau Comparatif
+
+| Métrique                    | tableBeautifuller         | Datatable               |
+|-----------------------------|---------------------------|-------------------------|
+| Nombre d'exécutions         | 3000                      | 3000                    |
+| Durée d'exécution (ms)      | 4083.40                   | 142709.70               |
+| Durée moyenne/ exécution (ms)| 1.36                     | 47.57                  |
+
+
+Comme on peut le voir dans le tableau ci-dessus, `tableBeautifuller` surpasse `Datatable` en termes de temps d'exécution, en étant significativement plus rapide sur 3000 exécutions.
+
 
 ## Installation
 

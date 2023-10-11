@@ -4,111 +4,12 @@
  * Author: Fabacks
  * License: Free distribution except for commercial use
  * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
- * Version 0.9.0
+ * Version 0.9.1
  * 
  * This software is provided "as is" without any warranty. The author is
  * not responsible for any damages or liabilities caused by the use of this software.
  * Please do not use this software for commercial purposes without explicit permission from the author.
  * If you use or distribute this software, please credit the author and link back to the GitHub repository.
  */
-/** Partie : table **/
-.tableBeautifuller th, .tableBeautifuller td {
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  position: relative;
-}
-.tableBeautifuller thead th {
-  cursor: pointer;
-  text-decoration: underline;
-}
-.tableBeautifuller thead th .sort-arrow {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-}
-.tableBeautifuller thead th > input,
-.tableBeautifuller thead th > select {
-  margin-top: 5px;
-  padding: 5px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.tableBeautifuller thead th > input {
-  transition: 0.3s;
-}
-.tableBeautifuller thead th > input:focus {
-  border-color: #007BFF;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-.tableBeautifuller thead th > select {
-  appearance: none;
-  background: url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
-  background-color: #fff;
-  cursor: pointer;
-}
-.tableBeautifuller thead th > select:hover {
-  border-color: #007BFF;
-}
-.tableBeautifuller.tableRowsColors tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
-.tableBeautifuller.tableRowsColors tbody tr:nth-child(even) {
-  background-color: #dbdbdb;
-}
-.tableBeautifuller.tableRowsHover tbody tr:hover {
-  background-color: #e6f2ff;
-}
 
-/** Partie : wrapper-top **/
-.tableBeautifuller.pagination-wrapper-top-container .pagination-wrapper-top {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-}
-.tableBeautifuller.pagination-wrapper-top-container .search-input {
-  display: block;
-  margin-bottom: 20px;
-  padding: 5px 10px;
-  float: right;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/** Partie : wrapper-bottom **/
-.tableBeautifuller.pagination-down-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-.tableBeautifuller.pagination-down-container .pagination-info {
-  margin-right: auto;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button {
-  padding: 5px 15px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background-color: transparent;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button:hover {
-  background-color: #007BFF;
-  color: white;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button.active {
-  background-color: #007BFF;
-  color: white;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button[disabled] {
-  cursor: not-allowed;
-  opacity: 0.5;
-  background-color: #cccccc;
-  pointer-events: none;
-}
-/*# sourceMappingURL=TableBeautifuller.min.css.map */
+.tableBeautifuller td,.tableBeautifuller th{border:1px solid #ddd;padding:8px 12px;position:relative}.tableBeautifuller thead th{cursor:pointer;text-decoration:underline}.tableBeautifuller thead th .sort-arrow{position:absolute;top:50%;right:10px;transform:translateY(-50%)}.tableBeautifuller thead th>input,.tableBeautifuller thead th>select{margin-top:5px;padding:5px;width:100%;border:1px solid #ccc;border-radius:4px}.tableBeautifuller thead th>input{transition:.3s}.tableBeautifuller thead th>input:focus{border-color:#007bff;box-shadow:0 0 5px rgba(0,123,255,.5)}.tableBeautifuller thead th>select{appearance:none;background:url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;background-color:#fff;cursor:pointer}.tableBeautifuller thead th>select:hover{border-color:#007bff}.tableBeautifuller.tableRowsColors tbody tr:nth-child(odd){background-color:#f9f9f9}.tableBeautifuller.tableRowsColors tbody tr:nth-child(even){background-color:#dbdbdb}.tableBeautifuller.tableRowsHover tbody tr:hover{background-color:#e6f2ff}.tableBeautifuller.pagination-wrapper-top-container .pagination-wrapper-top{display:flex;align-items:center;justify-content:flex-start;gap:6px}.tableBeautifuller.pagination-wrapper-top-container .search-input{display:block;margin-bottom:20px;padding:5px 10px;float:right;border:1px solid #ccc;border-radius:4px}.tableBeautifuller.pagination-down-container{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:20px}.tableBeautifuller.pagination-down-container .pagination-info{margin-right:auto}.tableBeautifuller.pagination-down-container .pagination-buttons-container button{padding:5px 15px;border:1px solid #ccc;border-radius:3px;background-color:transparent;color:#333;cursor:pointer;transition:background-color .3s,color .3s}.tableBeautifuller.pagination-down-container .pagination-buttons-container button:hover{background-color:#007bff;color:#fff}.tableBeautifuller.pagination-down-container .pagination-buttons-container button.active{background-color:#007bff;color:#fff}.tableBeautifuller.pagination-down-container .pagination-buttons-container button[disabled]{cursor:not-allowed;opacity:.5;background-color:#ccc;pointer-events:none}
