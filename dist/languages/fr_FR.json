@@ -1,11 +1,18 @@
 {
-    "searchPlaceholder": "Recherche...",
-    "all": "Tout",
-    "show": "Afficher",
-    "items": "éléments",
+    "searchGlobalTitle": "Recherche globale dans la table",
+    "searchGlobalPlaceholder": "Recherche...",
+    "searchColomnTitle": "Rechercher dans la colonne : ",
+    "searchColomnPlaceholder": "Rechercher dans la colonne ...",
+    "infoLabel": "Affichage de l'élément {{start}} à {{end}} sur {{total}} éléments",
     "previous": "Précédent",
     "next": "Suivant",
-    "displayingItem": "Affichage de l'élément",
-    "to": "à",
-    "of": "sur"
+    "all": "Tout",
+    "selectItemsDisplay": "Afficher",
+    "selectItemsItems": "éléments",
+    "selectItemsTitle" : "Nombre d'éléments affichés par pages",
+    "copy": "Copier",
+    "copyTitle": "Copier dans le presse-papier",
+    "copyExported" : "Texte copié dans le presse-papiers",
+    "csv": "CSV",
+    "csvTitle": "Exporter en CSV"
 }

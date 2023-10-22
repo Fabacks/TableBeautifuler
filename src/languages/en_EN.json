@@ -1,0 +1,18 @@
+{
+    "searchGlobalTitle": "Search in global table",
+    "searchGlobalPlaceholder": "Search...",
+    "searchColomnTitle": "Search in the column : ",
+    "searchColomnPlaceholder": "Search in the column ...",
+    "infoLabel": "Display of {{start}} element at {{end}} on {{total}} elements",
+    "previous": "Previous",
+    "next": "Next",
+    "all": "All",
+    "selectItemsDisplay": "Display",
+    "selectItemsItems": "items",
+    "selectItemsTitle" : "List for numbers items display",
+    "copy": "copy",
+    "copyTitle": "Copy to clipboard",
+    "copyExported" : "Text copied to clipboard",
+    "csv": "CSV",
+    "csvTitle": "Export to CSV"
+}

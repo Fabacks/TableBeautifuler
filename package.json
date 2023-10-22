@@ -1,6 +1,6 @@
 {
   "name": "tablebeautifuler",
-  "version": "0.9.1",
+  "version": "0.1.0",
   "description": "Welcome to TableBeautifuller, a JavaScript library designed to enhance your HTML tables with advanced features such as pagination, sorting, and searching.",
   "main": "index.js",
   "directories": {
@@ -26,7 +26,9 @@
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-header": "^2.0.9",
+    "gulp-insert": "^0.5.0",
     "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.1.4",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-terser": "^2.1.0",

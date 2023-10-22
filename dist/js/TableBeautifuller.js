@@ -15,19 +15,24 @@
 class TableBeautifuller {
     constructor(tableId, options = {}) {
         this.table = document.querySelector(tableId);
-        this.eventList = [];
-        this.plugins = [];
+        this.eventList = [];    // List of event listener
+        this.plugins = [];      // List of plugin active
+        this.filters = {};      // List of filter active
+        this.options = {};      // LIste of options
+        this.displayBloc = {};  // List of display
+
+        // Translate
+        this.lang = options.language ?? "en_EN";
+        this.translation = options.translation ?? {};
 
         // Display
-        this.displayBloc = {};
         this.displayBloc.info = options.info ?? true;
         this.displayBloc.ordering = options.ordering ?? true;
         this.displayBloc.paging = options.paging ?? true;
         this.displayBloc.searching = options.searching ?? true;
         this.displayBloc.columnSearch = options.columnSearch ?? true;
 
-        // Options
-        this.options = {};
+        // Levenshtein temparture (diffrence)
         this.options.temperature = parseInt(options.temperature) || 1;
 
         // Initialisation du trie par défaut
@@ -54,8 +59,13 @@ class TableBeautifuller {
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
 
-        // Initialisez un objet pour suivre les filtres actifs
-        this.filters = {}; 
+        this.readyPromise = this.init();
+    }
+
+    async init() {
+        if( this.translation.length == undefined || this.translation.length == 0) {
+            await this.loadTranslate();
+        }
 
         this.createWrappers();
 
@@ -82,9 +92,55 @@ class TableBeautifuller {
         }
     }
 
+    ready() {
+        return this.readyPromise;
+    }
+
+    async loadTranslate() {
+        if (this.lang === 'en_EN') {
+            this.getLangDefault();
+            return;
+        }
+
+        try {
+            const response = await fetch(this.lang, {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            this.translation = data;
+        } catch (error) {
+            console.error("Error loading translation file :", error);
+        }
+    }
+
+    translator(keys, variables = {}) {
+        let template = this.translation[keys] || keys;
+        // console.log("Key : " + keys + " || Translate : " + template);
+
+        for (let [k, v] of Object.entries(variables)) {
+            template = template.replace(`{{${k}}}`, v);
+        }
+
+        return template;
+    }
+
+    getLangDefault() {
+        // The variable is replaced during compilation
+        this.translation = {"searchGlobalTitle":"Search in global table","searchPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display"};
+    }
+
     use(plugin) {
-        plugin.install(this);
-        this.plugins.push(plugin);
+        this.ready().then(() => {
+            plugin.install(this);
+            this.plugins.push(plugin);
+        });
     }
 
     createWrappers() {
@@ -122,9 +178,9 @@ class TableBeautifuller {
 
     addSearchInput() {
         this.searchInput = document.createElement("input");
-        this.searchInput.title = "Search in global table";
+        this.searchInput.title = this.translator('searchGlobalTitle');
         this.searchInput.setAttribute("type", "text");
-        this.searchInput.setAttribute("placeholder", "Recherche...");
+        this.searchInput.setAttribute("placeholder", this.translator('searchGlobalPlaceholder'));
         this.searchInput.className = "search-input";
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
@@ -141,14 +197,14 @@ class TableBeautifuller {
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';
-            let colName = "Search for " + (header.innerHTML.indexOf('<span') !== -1 ? header.innerHTML.substring(0, header.innerHTML.indexOf('<span')).trim() : header.innerText);
+            let colName = this.translator('searchColomnTitle') + header.innerHTML.indexOf('<span') !== -1 ? header.innerHTML.substring(0, header.innerHTML.indexOf('<span')).trim() : header.innerText;
 
             switch (searchType) {
                 case "input":
                     let input = document.createElement('input');
                     input.type = "text";
                     input.title = colName;
-                    input.placeholder = "Rechercher dans la colonne...";
+                    input.placeholder = this.translator('searchColomnPlaceholder');
 
                     this.addEventList(input, 'input', this.debounce((e) => {
                         this.searchTable(header.cellIndex, e.target.value);
@@ -159,7 +215,7 @@ class TableBeautifuller {
                     let select = document.createElement('select');
                     select.title = colName;
                     let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex);
-                    select.innerHTML = `<option value="">Tout</option>`;
+                    select.innerHTML = `<option value="">` + this.translator('all') + `</option>`;
                     uniqueValues.forEach(val => {
                         let option = document.createElement('option');
                         option.value = val;
@@ -368,7 +424,7 @@ class TableBeautifuller {
 
         if( this.displayBloc.info) {
             let endDisplay = endIdx > totalRows ? totalRows : endIdx;
-            this.infoLabel.textContent = `Affichage de l'élément ${startIdx + 1} à ${endDisplay} sur ${totalRows} éléments`;
+            this.infoLabel.textContent = this.translator('infoLabel', {start : startIdx, end : endDisplay, total : totalRows});
         }
 
         // Control display of previous & next buttons
@@ -414,11 +470,11 @@ class TableBeautifuller {
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
 
         this.paginationInfoTop = document.createElement("span");
-        this.paginationInfoTop.textContent = "Afficher";
+        this.paginationInfoTop.textContent = this.translator('selectItemsDisplay');
         this.paginationWrapperTop.appendChild(this.paginationInfoTop);
 
         this.paginationSelect = document.createElement("select");
-        this.paginationSelect.title = "List for numbers items display";
+        this.paginationSelect.title = this.translator('selectItemsTitle');
         this.selectItemPage.forEach(num => {
             let option = document.createElement("option");
             option.value = num;
@@ -430,7 +486,7 @@ class TableBeautifuller {
         this.paginationWrapperTop.appendChild(this.paginationSelect);
 
         this.paginationInfoTopAfter = document.createElement("span");
-        this.paginationInfoTopAfter.textContent = "éléments";
+        this.paginationInfoTopAfter.textContent = this.translator('selectItemsItems');
         this.paginationWrapperTop.appendChild(this.paginationInfoTopAfter);
 
         this.paginationWrapperTopContainer.appendChild(this.paginationWrapperTop);
@@ -440,12 +496,12 @@ class TableBeautifuller {
         this.paginationButtonsContainer.className = 'pagination-buttons-container';
 
         this.prevButton = document.createElement('button');
-        this.prevButton.textContent = 'Précédent';
+        this.prevButton.textContent = this.translator('previous');
         this.prevButton.className = 'page-prev';
         this.paginationButtonsContainer.appendChild(this.prevButton);
 
         this.nextButton = document.createElement('button');
-        this.nextButton.textContent = 'Suivant';
+        this.nextButton.textContent = this.translator('next');
         this.nextButton.className = 'page-next';
         this.paginationButtonsContainer.appendChild(this.nextButton);
         this.paginationWrapperDownContainer.appendChild(this.paginationButtonsContainer);

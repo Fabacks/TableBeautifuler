@@ -5,6 +5,7 @@ const rename = require('gulp-rename');
 const sourcemaps = require('gulp-sourcemaps');
 const header = require('gulp-header');
 const cleanCSS = require('gulp-clean-css');
+const replace = require('gulp-replace');
 
 const package = require('./package.json');
 const banner = `/**
@@ -23,8 +24,11 @@ const banner = `/**
 
 
 function js() {
+    const jsonData = JSON.stringify(require('./src/languages/en_EN.json'));
+
     return src('src/*.js')
         // .pipe(sourcemaps.init())
+        .pipe(replace("'@@INSERT_TRANSLATIONS_HERE@@'", jsonData))
         .pipe(terser())
         .pipe(header(banner))
         .pipe(rename({ extname: '.min.js' }))
@@ -33,7 +37,10 @@ function js() {
 }
 
 function jsCopy() {
+    const jsonData = JSON.stringify(require('./src/languages/en_EN.json'));
+
     return src('src/*.js')
+        .pipe(replace("'@@INSERT_TRANSLATIONS_HERE@@'", jsonData))
         .pipe(header(banner))
         .pipe(dest('dist/js'));
 }

@@ -12,16 +12,7 @@ To initialize TableBeautifuller, you need an HTML table with a unique identifier
 let myTable = new TableBeautifuller("#myTable");
 ```
 
-## Using Plugins
 
-`tableBeautifuller` allows the use of plugins to extend its functionalities. To add a plugin, you should use the `use` method as shown in the following example with the `TableBeautifullerExport` plugin:
-
-```javascript
-table.use(new TableBeautifullerExport({
-    exportCSV: true, 
-    copy: true
-}));
-```
 
 ## Main Methods
 
@@ -31,6 +22,40 @@ Here are some methods you might find useful:
 
 ## Table Options or Attributes
 Certain elements can be passed via the constructor or directly on the HTML elements. If the property appears in both the constructor and the tag, the constructor's value takes precedence.
+
+
+## Use of Translation
+The library comes with an English translation by default. You have the option to customize the language used through two available options in the constructor.
+
+### option: language
+This option allows you to provide the URL of a JSON file containing translations. For instance, to use French, you can specify the path to fr_FR.json.
+
+```javascript
+let myTable = new TableBeautifuller("myTable", {
+    lang: {
+        language: "./../dist/languages/fr_FR.json"
+    }
+});
+```
+
+
+### option: translation
+This option allows you to directly pass the translation object into the constructor, thus avoiding an AJAX load and speeding up the process.
+
+If the translation option is used, the language option becomes unnecessary.
+
+Note that the "en_EN.json" file is incorporated into the library during compilation.
+
+```javascript
+let table = new TableBeautifuller("#demo-table", {
+    translation : {
+        "searchGlobalTitle": "Global search in the table",
+        "searchGlobalPlaceholder": "Search...",
+        //... other translation strings
+    }
+});
+```
+
 
 ## Options
 
@@ -220,6 +245,18 @@ To display a default color when hovering over a row, add the class "tableRowsHov
 
 
 ## Plugins:
+
+### Using Plugins
+
+`tableBeautifuller` allows the use of plugins to extend its functionalities. To add a plugin, you should use the `use` method as shown in the following example with the `TableBeautifullerExport` plugin:
+
+```javascript
+table.use(new TableBeautifullerExport({
+    exportCSV: true, 
+    copy: true
+}));
+```
+
 ### TableBeautifullerExport
 This plugin adds export functionalities to your tables. It introduces two buttons:
 

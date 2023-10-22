@@ -35,8 +35,8 @@ class TableBeautifullerExport {
 
     addCopyButton(container) {
         const copyBtn = document.createElement('button');
-        copyBtn.innerText = "Copier";
-        copyBtn.title = "Copier dans le presse-papier";
+        copyBtn.innerText = this.tableBF.translator('copy');
+        copyBtn.title = this.tableBF.translator('copyTitle');
         container.appendChild(copyBtn);
 
         // this.tableBF.addEventList(copyBtn, 'click', this.copyTableData().bind(this.tableBF));
@@ -47,8 +47,8 @@ class TableBeautifullerExport {
 
     addCSVButton(container) {
         const csvBtn = document.createElement('button');
-        csvBtn.innerText = "CSV";
-        csvBtn.title = "Exporter en CSV";
+        csvBtn.innerText = this.tableBF.translator('csv');
+        csvBtn.title = this.tableBF.translator('csvTitle');
         container.appendChild(csvBtn);
 
         let nameFile = 'tableDatas.csv';
@@ -90,7 +90,7 @@ class TableBeautifullerExport {
 
         try {
             navigator.clipboard.writeText(textToCopy);
-            alert('Text copied to clipboard');
+            alert( this.tableBF.translator('copyExported') );
         } catch (err) {
             console.error('Failed to copy text: ', err);
         }

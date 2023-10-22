@@ -13,6 +13,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    // An example with all the possible options
     let table = new TableBeautifuller("#demo-table", {
         pageLength: 15,
         selectItemPage: [1, 10, 20 , 30, 50],
@@ -22,6 +23,26 @@ document.addEventListener("DOMContentLoaded", () => {
         info: true,
         columnSearch: true,
         searching: true,
+        temperature: 1,
+        language: "./../dist/languages/fr_FR.json",
+        // translation : {
+        //     "searchGlobalTitle": "Recherche globale dans la table",
+        //     "searchGlobalPlaceholder": "Recherche...",
+        //     "searchColomnTitle": "Rechercher dans la colonne : ",
+        //     "searchColomnPlaceholder": "Rechercher dans la colonne ...",
+        //     "infoLabel": "Affichage de l'élément {{start}} à {{end}} sur {{total}} éléments",
+        //     "previous": "Précédent",
+        //     "next": "Suivant",
+        //     "all": "Tout",
+        //     "selectItemsDisplay": "Afficher",
+        //     "selectItemsItems": "éléments",
+        //     "selectItemsTitle" : "Nombre d'éléments affichés par pages",
+        //     "copy": "Copier",
+        //     "copyTitle": "Copier dans le presse-papier",
+        //     "copyExported" : "Texte copié dans le presse-papiers",
+        //     "csv": "CSV",
+        //     "csvTitle": "Exporter en CSV"
+        // }
     });
 
     table.use(new TableBeautifullerExport({

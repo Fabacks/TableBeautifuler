@@ -12,16 +12,6 @@ Pour initialiser TableBeautifuller, vous avez besoin d'une table HTML du tableau
 let myTable = new TableBeautifuller("#myTable");
 ```
 
-## Utilisation des Plugins
-
-`tableBeautifuller` permet l'utilisation de plugins pour étendre ses fonctionnalités. Pour ajouter un plugin, vous devez utiliser la méthode `use` comme dans l'exemple suivant avec le plugin `TableBeautifullerExport` :
-
-```javascript
-table.use(new TableBeautifullerExport({
-    exportCSV: true, 
-    copy: true
-}));
-```
 
 ## Méthodes principales
 
@@ -33,8 +23,39 @@ Voici quelques méthodes que vous pourriez trouver utiles:
 Certains éléments peuvent être passés par le constructeur ou directement sur les éléments HTML. Si la propriété apparait à la fois dans le constructeur et sur la balise, la valeur du constructeur est prioritaire.
 
 
+## Utilisation de la Traduction
+La bibliothèque intègre par défaut une traduction anglaise. Vous avez la possibilité de personnaliser la langue utilisée grâce à deux options disponibles dans le constructeur.
 
-## Options
+### option : language 
+Cette option permet de passer l'URL d'un fichier JSON contenant les traductions. Par exemple, pour utiliser le français, vous pouvez spécifier le chemin vers fr_FR.json.
+
+```javascript
+let myTable = new TableBeautifuller("myTable", {
+    lang: {
+        language: "./../dist/languages/fr_FR.json"
+    }
+});
+```
+
+
+### option : translation 
+Cette option permet de passer directement l'objet de traduction dans le constructeur, évitant ainsi un chargement AJAX et accélérant le processus.
+
+Si l'option translation est utilisée, l'option language devient inutile.
+
+Notez que le fichier "en_EN.json" est incorporé dans la bibliothèque lors de la compilation.
+
+```javascript
+let table = new TableBeautifuller("#demo-table", {
+    translation : {
+        "searchGlobalTitle": "Recherche globale dans la table",
+        "searchGlobalPlaceholder": "Recherche...",
+        //... autres chaînes de traduction
+    }
+});
+```
+
+## Options du constructeur
 
 Lors de l'initialisation de TableBeautifuller, vous pouvez passer un objet d'options. Voici les options disponibles :
 
@@ -255,6 +276,19 @@ Pour afficher une couleur par défaut lors du survol d'une ligne, il faut rajout
 ```
 
 ## Plugins : 
+
+### Utilisation des Plugins
+
+`tableBeautifuller` permet l'utilisation de plugins pour étendre ses fonctionnalités. Pour ajouter un plugin, vous devez utiliser la méthode `use` comme dans l'exemple suivant avec le plugin `TableBeautifullerExport` :
+
+```javascript
+table.use(new TableBeautifullerExport({
+    exportCSV: true, 
+    copy: true
+}));
+```
+
+
 ### TableBeautifullerExport
 Ce plugin ajoute des fonctionnalités d'exportation à vos tables. Il introduit deux boutons :
 
