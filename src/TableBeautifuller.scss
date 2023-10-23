@@ -65,15 +65,13 @@ $backgroundWhite: #fff;
     }
 
     // Coloration ligne pair et impair
-    &.tableRowsColors {
-        tbody {
-            tr:nth-child(odd) {
-                background-color: $oddRowColor;
-            }
+    tbody {
+        .odd {
+            background-color: $oddRowColor;
+        }
 
-            tr:nth-child(even) {
-                background-color: $evenRowColor;
-            }
+        .even {
+            background-color: $evenRowColor;
         }
     }
 

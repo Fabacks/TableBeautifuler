@@ -4,7 +4,7 @@
  * Author: Fabacks
  * License: Free distribution except for commercial use
  * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
- * Version 0.9.1
+ * Version 0.1.1
  * 
  * This software is provided "as is" without any warranty. The author is
  * not responsible for any damages or liabilities caused by the use of this software.
@@ -18,12 +18,12 @@ class TableBeautifuller {
         this.eventList = [];    // List of event listener
         this.plugins = [];      // List of plugin active
         this.filters = {};      // List of filter active
-        this.options = {};      // LIste of options
+        this.options = {};      // List of options
         this.displayBloc = {};  // List of display
 
         // Translate
         this.lang = options.language ?? "en_EN";
-        this.translation = options.translation ?? {};
+        this.translation = options.translation ?? null;
 
         // Display
         this.displayBloc.info = options.info ?? true;
@@ -32,7 +32,7 @@ class TableBeautifuller {
         this.displayBloc.searching = options.searching ?? true;
         this.displayBloc.columnSearch = options.columnSearch ?? true;
 
-        // Levenshtein temparture (diffrence)
+        // Levenshtein temperature (différence)
         this.options.temperature = parseInt(options.temperature) || 1;
 
         // Initialisation du trie par défaut
@@ -59,12 +59,16 @@ class TableBeautifuller {
         // Initialisation du debounce
         this.debounce_delai = options.debounceDelai || 300;
 
-        this.readyPromise = this.init();
+        // Colorisation des lignes pair et impair
+        this.options.rowOddEven = options.rowOddEven ?? true;
+
+        // this.readyPromise = this.init();
+        this.init();
     }
 
-    async init() {
-        if( this.translation.length == undefined || this.translation.length == 0) {
-            await this.loadTranslate();
+    init() {
+        if( this.translation === null ) {
+            this.loadTranslate();
         }
 
         this.createWrappers();
@@ -96,25 +100,23 @@ class TableBeautifuller {
         return this.readyPromise;
     }
 
-    async loadTranslate() {
+    loadTranslate() {
         if (this.lang === 'en_EN') {
             this.getLangDefault();
             return;
         }
 
         try {
-            const response = await fetch(this.lang, {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
+            let request = new XMLHttpRequest();
+            request.open('GET', this.lang, false);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.send(null);
 
-            if (!response.ok) {
+            if (request.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json();
-            this.translation = data;
+            this.translation = JSON.parse(request.responseText);
         } catch (error) {
             console.error("Error loading translation file :", error);
         }
@@ -133,14 +135,14 @@ class TableBeautifuller {
 
     getLangDefault() {
         // The variable is replaced during compilation
-        this.translation = {"searchGlobalTitle":"Search in global table","searchPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display"};
+        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV"};
     }
 
     use(plugin) {
-        this.ready().then(() => {
+        // this.ready().then(() => {
             plugin.install(this);
             this.plugins.push(plugin);
-        });
+        // });
     }
 
     createWrappers() {
@@ -309,6 +311,7 @@ class TableBeautifuller {
         });
 
         this.table.querySelector("tbody").append(...rows);
+        this.oddEven();
     }
 
     applyInitialOrder() {
@@ -319,6 +322,30 @@ class TableBeautifuller {
             let header = this.table.querySelector(`th:nth-child(${colIndex + 1})`);
             header.dataset.sort = direction.toLowerCase();
             this.updateArrows(header);
+        });
+    }
+
+    oddEven() {
+        if( !this.options.rowOddEven )
+            return;
+
+        let rows = this.table.querySelectorAll("tbody tr");
+        var visibleCount = 0;
+
+        rows.forEach(row => {
+            if( row.style.display == "none" )
+                return;
+
+            visibleCount++;
+
+            row.classList.remove('even');
+            row.classList.remove('odd');
+
+            if (visibleCount % 2 === 0) {
+                row.classList.add('even');
+            } else {
+                row.classList.add('odd');
+            }
         });
     }
 
@@ -356,7 +383,7 @@ class TableBeautifuller {
                 }
 
                 rowText = rowText.trim().toLowerCase();
-                if ( !this.matchesUsingLevenshtein(rowText, filterQuery, this.options.temperature) ){
+                if ( !this.matchesUsingLevenshtein(rowText, filterQuery) ){
                     row.style.display = "none";
                     row.dataset.matched = "false";
                 }
@@ -368,18 +395,18 @@ class TableBeautifuller {
         this.paginate();
     }
 
-    matchesUsingLevenshtein(rowText, filterQuery, temperature) {
+    matchesUsingLevenshtein(rowText, filterQuery) {
         if ( rowText.indexOf(filterQuery) !== -1) {
             return true;
         }
 
-        if( temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
+        if( this.options.temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
             return false;
         }
 
         for (let i = 0; i <= rowText.length - filterQuery.length; i++) {
             let sub = rowText.substring(i, i + filterQuery.length);
-            if (this.levenshteinDistance(sub, filterQuery) <= temperature) {
+            if (this.levenshteinDistance(sub, filterQuery) <= this.options.temperature) {
                 return true;
             }
         }
@@ -456,6 +483,7 @@ class TableBeautifuller {
             this.paginationButtonsContainer.insertBefore(btn, lastChild);
         }
 
+        this.oddEven();
     }
 
     addInfoControls() {

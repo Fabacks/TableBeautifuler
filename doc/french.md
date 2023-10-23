@@ -59,19 +59,10 @@ let table = new TableBeautifuller("#demo-table", {
 
 Lors de l'initialisation de TableBeautifuller, vous pouvez passer un objet d'options. Voici les options disponibles :
 
-<!-- - **lang**: Un objet qui spécifie les données de langue. Par défaut, cela est défini sur un objet vide.
 
-```javascript
-let myTable = new TableBeautifuller("myTable", {
-    lang: {
-        // données de langue ici
-    }
-});
-``` -->
-
-
-- **info**: 
+### info : 
 Permet spécifier si l'on afficher les informations sur le nombre d'éléments du tableau. Exemple : "Affichage de l'élément 1 à 15 sur 57 éléments". Par défaut true si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     info: false
@@ -79,8 +70,9 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **ordering**: 
+### ordering : 
 Permet spécifier si l'on veut un trie sur les colonnes. Par défaut true si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     ordering: false
@@ -88,8 +80,9 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **order**: 
+### order : 
 Permet de spécifier quelle colonne doit être trier et dans quel sens (ASC, DESC) à la création du tableau.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     order: [[0, 'ASC']]
@@ -97,8 +90,9 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **paging**:
+### paging :
 Permet spécifier si l'on veut de la pagination. Par défaut true si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     paging: false
@@ -106,16 +100,19 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **pageLength**:
+### pageLength :
 Nombre d'élément affiché par page de pagination. Par défaut 10 si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     pageLength: 10
 });
 ```
 
-- **selectItemPage**:
+
+### selectItemPage :
 Définie dans le sélecteur le nombre d'éléments affichable possible. Par défaut [10, 20, 30] si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     selectItemPage: [10, 20, 30]
@@ -123,7 +120,7 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **searching**:
+### searching :
 Permet spécifier si l'on veut une recherche global sur le tableau. Par défaut true si non spécifié.
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
@@ -132,8 +129,9 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **columnSearch**:
+### columnSearch :
 Permet spécifier si l'on veut une recherche sur chaque colonne sur le tableau. Attention : Pour que cette option soit active, il faut au préalable avoir définie l'attribut colSearch, [voir ici : recherche par colonnes](#recherche_colonne). Par défaut true si non spécifié.
+
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     columnSearch: false
@@ -141,7 +139,7 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **temperature**: 
+### temperature :
 Permet spécifier la distance pour algorithme de Levenshtein lors de la recherche. Par défaut à 1 si non spécifié. [voir ici pour plus d'explication](#recherche_levenshtein)
 
 ```javascript
@@ -151,15 +149,26 @@ let myTable = new TableBeautifuller("myTable", {
 ```
 
 
-- **debounceDelai**: 
+### debounceDelai :
 
-Permet de définir un délais pour le debounce lors de la recherche. Par default  300ms si non spécifié.
+Permet de définir un délais pour le debounce lors de la recherche. Par default 300ms si non spécifié.
 
 ```javascript
 let myTable = new TableBeautifuller("myTable", {
     debounceDelai : 300
 });
 ```
+
+### rowOddEven : (Ligne pair et Impair)
+Pour afficher une couleur par défaut sur les lignes pair et impaire, il faut rajouter l'option "rowOddEven" à true. Par default true si non spécifié.
+
+```javascript
+let myTable = new TableBeautifuller("myTable", {
+    rowOddEven : true
+});
+```
+
+---
 
 ## Attributs de la table
 
@@ -258,14 +267,6 @@ Attention : Sur de grosse quantité de données, cela peut réduire les performa
 
 
 ## Stylisation du tableau
-
-### Ligne pair et Impair
-Pour afficher une couleur par défaut sur les lignes pair et impaire, il faut rajouter la class "tableRowsColors".
-
-
-```html
-<table id="myTable" class="tableRowsColors">
-```
 
 ### Survol d'une ligne
 Pour afficher une couleur par défaut lors du survol d'une ligne, il faut rajouter la class "tableRowsHover".

@@ -4,7 +4,7 @@
  * Author: Fabacks
  * License: Free distribution except for commercial use
  * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
- * Version 0.9.1
+ * Version 0.1.1
  * 
  * This software is provided "as is" without any warranty. The author is
  * not responsible for any damages or liabilities caused by the use of this software.
@@ -52,10 +52,10 @@
 .tableBeautifuller thead th > select:hover {
   border-color: #007BFF;
 }
-.tableBeautifuller.tableRowsColors tbody tr:nth-child(odd) {
+.tableBeautifuller tbody .odd {
   background-color: #f9f9f9;
 }
-.tableBeautifuller.tableRowsColors tbody tr:nth-child(even) {
+.tableBeautifuller tbody .even {
   background-color: #dbdbdb;
 }
 .tableBeautifuller.tableRowsHover tbody tr:hover {

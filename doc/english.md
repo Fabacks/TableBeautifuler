@@ -141,6 +141,18 @@ let myTable = new TableBeautifuller("myTable", {
 });
 ```
 
+
+- Even and Odd Rows
+
+To display a default color for even and odd rows, add the option "rowOddEven" to true. Defaults to true if not specified.
+
+```javascript
+let myTable = new TableBeautifuller("myTable", {
+    rowOddEven : true
+});
+```
+
+
 ## Table Attributes
 
 Certain attributes can be added directly to the tags of your table to influence the behavior of TableBeautifuller.
@@ -226,14 +238,6 @@ The algorithm only works if:
 **Note:** For large datasets, this can reduce performance. To deactivate the Levenshtein algorithm, simply set the "temperature" to 0.
 
 ## Table Styling
-
-### Even and Odd Rows
-
-To display a default color for even and odd rows, add the class "tableRowsColors".
-
-```html
-<table id="myTable" class="tableRowsColors">
-```
 
 ### Row Hover
 
