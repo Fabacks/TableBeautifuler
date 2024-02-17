@@ -217,7 +217,8 @@ class TableBeautifuller {
                     cell.appendChild(select);
                 break;
                 default:
-                    return;
+                    // On ne fait rien, cela ajoutera un th vide
+                break;
             }
 
             searchRow.appendChild(cell);

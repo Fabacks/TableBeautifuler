@@ -191,6 +191,19 @@ class TableBeautifuller {
         }, this.debounce_delai).bind(this));
     }
 
+    getNameColumns() {
+        let heads = this.table.querySelectorAll("th");
+
+        // Les colonnes sans 'data-cname' ne sont pas ajoutées à l'objet headers
+        heads.forEach((th, index) => {
+            let columnName = th.getAttribute('data-cname');
+            if ( !columnName )
+                return;
+
+            this.headersName[index] = columnName;
+        });
+    }
+
     addSearchColumn() {
         let searchRow = document.createElement('tr');
         searchRow.classList.add("thead-search");
@@ -231,7 +244,8 @@ class TableBeautifuller {
                     cell.appendChild(select);
                 break;
                 default:
-                    return;
+                    // On ne fait rien, cela ajoutera un th vide
+                break;
             }
 
             searchRow.appendChild(cell);
