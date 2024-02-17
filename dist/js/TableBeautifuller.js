@@ -187,28 +187,15 @@ class TableBeautifuller {
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
         this.addEventList(this.searchInput, 'keyup', this.debounce(() => {
-            this.searchTable(null, this.searchInput.value);
+            this.searchTable(null, this.searchInput.value, 'text');
         }, this.debounce_delai).bind(this));
-    }
-
-    getNameColumns() {
-        let heads = this.table.querySelectorAll("th");
-
-        // Les colonnes sans 'data-cname' ne sont pas ajoutées à l'objet headers
-        heads.forEach((th, index) => {
-            let columnName = th.getAttribute('data-cname');
-            if ( !columnName )
-                return;
-
-            this.headersName[index] = columnName;
-        });
     }
 
     addSearchColumn() {
         let searchRow = document.createElement('tr');
         searchRow.classList.add("thead-search");
 
-        let headers = this.table.querySelectorAll("th");
+        let headers = this.table.querySelectorAll("thead th");
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';
@@ -222,7 +209,7 @@ class TableBeautifuller {
                     input.placeholder = this.translator('searchColomnPlaceholder');
 
                     this.addEventList(input, 'input', this.debounce((e) => {
-                        this.searchTable(header.cellIndex, e.target.value);
+                        this.searchTable(header.cellIndex, e.target.value, 'text');
                     }, this.debounce_delai).bind(this));
                     cell.appendChild(input);
                 break;
@@ -239,7 +226,7 @@ class TableBeautifuller {
                     });
 
                     this.addEventList(select, 'change', this.debounce((e) => {
-                        this.searchTable(header.cellIndex, e.target.value);
+                        this.searchTable(header.cellIndex, e.target.value, 'select');
                     }, this.debounce_delai).bind(this));
                     cell.appendChild(select);
                 break;
@@ -363,11 +350,13 @@ class TableBeautifuller {
         });
     }
 
-    searchTable(colIndex, query) {
+    searchTable(colIndex, query, typeSearch) {
         query = query.trim();
 
-        // Mise à jour de l'objet des filtres, on utilise 'global' comme clé pour une recherche globale
+        // on utilise 'global' comme clé pour une recherche globale ou le numéro d'index pour les colonnes
         let key = colIndex === null || colIndex === undefined ? "global" : colIndex;
+
+        // Mise à jour de l'objet des filtres
         if (query.trim() != '') {
             this.filters[key] = query.toLowerCase();
         } else {
@@ -387,17 +376,20 @@ class TableBeautifuller {
                 if (row.dataset.matched !== "true") 
                     return;
 
+                // Info : data-search dans ce contexte  est sur le td des données pour avoir plus d'information exemple : <td data-search="Tiger Nixon">T. Nixon</td>
                 let rowText = ""
                 if (filterKey !== 'global') {
                     let cell = row.cells[parseInt(filterKey)];
                     rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
                 } else {
                     let cells = Array.from(row.getElementsByTagName("td"));
-                    rowText = Array.from(cells).map(cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent).join(' ');
+                    rowText = Array.from(cells).map(
+                        cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent
+                    ).join(' ');
                 }
 
                 rowText = rowText.trim().toLowerCase();
-                if ( !this.matchesUsingLevenshtein(rowText, filterQuery) ){
+                if ( !this.matchesUsingLevenshtein(rowText, filterQuery, typeSearch) ){
                     row.style.display = "none";
                     row.dataset.matched = "false";
                 }
@@ -409,12 +401,28 @@ class TableBeautifuller {
         this.paginate();
     }
 
-    matchesUsingLevenshtein(rowText, filterQuery) {
+    determineTemperature(typeSearch) {
+        let temperture = 0;
+
+        switch (typeSearch) {
+            case 'text' :
+                temperture = this.options.temperature;
+            break;
+            case 'select' :
+                temperture = 0;
+            break;
+        }
+
+        return temperture;
+    }
+
+    matchesUsingLevenshtein(rowText, filterQuery, typeSearch) {
         if ( rowText.indexOf(filterQuery) !== -1) {
             return true;
         }
 
-        if( this.options.temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
+        let temperature = this.determineTemperature(typeSearch);
+        if( temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
             return false;
         }
 
