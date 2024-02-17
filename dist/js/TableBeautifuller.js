@@ -38,11 +38,11 @@ class TableBeautifuller {
         // Initialisation du trie par défaut
         let orderString = options.order || this.table.getAttribute("data-order");
         if (typeof orderString === "string") {
-            this.initialOrder = JSON.parse(orderString);
+            this.sortedColumns = JSON.parse(orderString);
         } else if (Array.isArray(orderString)) {
-            this.initialOrder = orderString;
+            this.sortedColumns = orderString;
         } else {
-            this.initialOrder = [];
+            this.sortedColumns = [];
         }
 
         // Initialisation des valeurs pour la pagination (nombre item par page)
@@ -269,8 +269,9 @@ class TableBeautifuller {
 
     headerClickHandler(header, idx) {
         let sortDirection = header.dataset.sort === 'asc' ? 'desc' : 'asc';
-        this.sortTable(idx, sortDirection);
         header.dataset.sort = sortDirection;
+
+        this.sortTable(idx, sortDirection);
         this.updateArrows(header);
     }
 
@@ -298,13 +299,12 @@ class TableBeautifuller {
     }
 
     sortTable(colIndex, direction) {
-        let type = this.detectColumnType(colIndex);
         let rows = Array.from(this.table.querySelector("tbody").querySelectorAll("tr"));
         rows.sort((a, b) => {
             let A = a.cells[colIndex].hasAttribute('data-order') ? a.cells[colIndex].getAttribute('data-order') : a.cells[colIndex].textContent.trim();
             let B = b.cells[colIndex].hasAttribute('data-order') ? b.cells[colIndex].getAttribute('data-order') : b.cells[colIndex].textContent.trim();
 
-            if (type === 'number') {
+            if (this.detectColumnType(colIndex) === 'number') {
                 return direction === 'asc' ? A - B : B - A;
             } else {
                 return direction === 'asc' ? A.localeCompare(B) : B.localeCompare(A);
@@ -316,7 +316,7 @@ class TableBeautifuller {
     }
 
     applyInitialOrder() {
-        this.initialOrder.forEach(orderCriteria => {
+        this.sortedColumns.forEach(orderCriteria => {
             let [colIndex, direction] = orderCriteria;
             this.sortTable(colIndex, direction.toLowerCase());
 
