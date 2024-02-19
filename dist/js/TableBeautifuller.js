@@ -202,7 +202,8 @@ class TableBeautifuller {
             let colName = this.translator('searchColomnTitle') + header.innerHTML.indexOf('<span') !== -1 ? header.innerHTML.substring(0, header.innerHTML.indexOf('<span')).trim() : header.innerText;
 
             switch (searchType) {
-                case "input":
+                case "input":     // deprecated
+                case "text":
                     let input = document.createElement('input');
                     input.type = "text";
                     input.title = colName;
@@ -213,7 +214,8 @@ class TableBeautifuller {
                     }, this.debounce_delai).bind(this));
                     cell.appendChild(input);
                 break;
-                case "combobox":
+                case "combobox":    // deprecated
+                case "select":
                     let sortOrder = header.getAttribute('data-searchOrder') ?? 'asc';
                     sortOrder = sortOrder.toLowerCase();
                     if (sortOrder !== 'asc' && sortOrder !== 'desc') {

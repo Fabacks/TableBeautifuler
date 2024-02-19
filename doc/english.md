@@ -171,23 +171,32 @@ Initializes the default column sorting. (Currently, only one sort is possible). 
 Here, `0` represents the column index and `asc` the sort direction (ascending).
 
 <a id="column_search"></a>
-- **data-search**: Specifies the type of search to perform. Possible types are "input" and "combobox". Add this attribute to column headers in the thead. This adds a search row specific to the column in the "thead". Example:
+- **data-search**: Specifies the type of search to perform. Possible types are "text" and "select". Add this attribute to column headers in the thead. This adds a search row specific to the column in the "thead". 
+
+  - Type "*text*" : Allows for text-based searches on the column.
+
+  - Type "*select*" : Allows for an exact search based on the selection from a dropdown list. Recommended when the column contains identical values.
+
+  - Deprecations : The "input" type is renamed to "text" to be more consistent if we add input types like date, etc. The "combobox" type is renamed to "select" to align with HTML terminology.
+
+
+Example:
 ```html
 <table>
     <thead>
         <tr>
-            <th data-search="input">Name</th>
-            <th data-search="combobox">Country</th>
+            <th data-search="text">Name</th>
+            <th data-search="select">Country</th>
         ...
 ```
 
-- **data-searchOrder**: Allows specifying a sort order for selects. It must be added in the th where the data-search="combobox" is located. The possible choices are "asc" or "desc", with the default value being "asc".
+- **data-searchOrder**: Allows specifying a sort order for selects. It must be added in the th where the data-search="select" is located. The possible choices are "asc" or "desc", with the default value being "asc".
 
 ```html
 <table>
     <thead>
         <tr>
-            <th data-search="combobox" data-searchOrder="desc">Country</th>
+            <th data-search="select" data-searchOrder="desc">Country</th>
         ....
 ```
 

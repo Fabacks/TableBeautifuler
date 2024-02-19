@@ -193,26 +193,34 @@ Ici, `0` représente l'index de la colonne et `asc` le sens du tri (ascendant).
 
 
 <a id="recherche_colonne"></a>
-- **data-search**: Spécifie le type de recherche à effectuer. Les types possibles sont "input" et "combobox". Ajoutez cet attribut aux en-têtes de colonne dans le thead. 
-Rajoute dans le "thead" une ligne de recherche spécifique à la colonne. Exemple:
+- **data-search**: Spécifie le type de recherche à effectuer. Les types possibles sont "text" et "select". Ajoutez cet attribut aux en-têtes de colonne dans le thead. 
+Rajoute dans le "thead" une ligne de recherche spécifique à la colonne.
+
+  - Type "*text*" : Permet d'effectuer une recherche de type texte sur la colonne.
+
+  - Type "*select*" : Permet de faire une recherche exacte par rapport à la sélection d'une liste déroulante. Recommandé lorsque la colonne contient des valeurs identiques.
+
+  - Dépréciations : Le type "input" devient "text" afin d'être plus cohérent si l'on rajoute des types input comme date, etc. Le type "combobox" devient "select" pour être raccord avec les termes html.
+
+ Exemple:
 
 ```html
 <table>
     <thead>
         <tr>
-            <th data-search="input">Name</th>
-            <th data-search="combobox">Country</th>
+            <th data-search="text">Name</th>
+            <th data-search="select">Country</th>
         ....
 ```
 
 
-- **data-searchOrder**: Permet de spécifier un ordre de trie pour les select. Il faut rajouter dans le th ou ce situe le data-search="combobox". Le choix possible est "asc" ou "desc", par défaut la valeur est "asc".
+- **data-searchOrder**: Permet de spécifier un ordre de trie pour les select. Il faut rajouter dans le th ou ce situe le data-search="select". Le choix possible est "asc" ou "desc", par défaut la valeur est "asc".
 
 ```html
 <table>
     <thead>
         <tr>
-            <th data-search="combobox" data-searchOrder="desc">Country</th>
+            <th data-search="select" data-searchOrder="desc">Country</th>
         ....
 ```
 
