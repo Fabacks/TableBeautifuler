@@ -205,6 +205,19 @@ Rajoute dans le "thead" une ligne de recherche spécifique à la colonne. Exempl
         ....
 ```
 
+
+- **data-searchOrder**: Permet de spécifier un ordre de trie pour les select. Il faut rajouter dans le th ou ce situe le data-search="combobox". Le choix possible est "asc" ou "desc", par défaut la valeur est "asc".
+
+```html
+<table>
+    <thead>
+        <tr>
+            <th data-search="combobox" data-searchOrder="desc">Country</th>
+        ....
+```
+
+
+
 - **data-search**:  Permet d'effectuer une recherche spécifique pour cette cellule. Utile pour afficher des diminutifs mais que l'on veut effectuer la recherche sur le nom complet Exemple:
 
 ```html

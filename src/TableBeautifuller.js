@@ -200,9 +200,15 @@ class TableBeautifuller {
                     cell.appendChild(input);
                 break;
                 case "combobox":
+                    let sortOrder = header.getAttribute('data-searchOrder') ?? 'asc';
+                    sortOrder = sortOrder.toLowerCase();
+                    if (sortOrder !== 'asc' && sortOrder !== 'desc') {
+                        sortOrder = 'asc';
+                    }
+
                     let select = document.createElement('select');
                     select.title = colName;
-                    let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex);
+                    let uniqueValues = this.getUniqueValuesForColumn(header.cellIndex, sortOrder);
                     select.innerHTML = `<option value="">` + this.translator('all') + `</option>`;
                     uniqueValues.forEach(val => {
                         let option = document.createElement('option');
@@ -227,7 +233,7 @@ class TableBeautifuller {
         this.table.querySelector('thead').appendChild(searchRow);
     }
 
-    getUniqueValuesForColumn(colIndex) {
+    getUniqueValuesForColumn(colIndex, sortOrder) {
         let values = [];
         let rows = this.table.querySelector("tbody").querySelectorAll("tr");
         rows.forEach(row => {
@@ -237,6 +243,19 @@ class TableBeautifuller {
                 values.push(value);
             }
         });
+
+        // Tri des valeurs en tenant compte des nombres
+        values.sort((a, b) => {
+            // Convertit en nombres si possible, sinon laisse comme chaîne
+            let numA = isNaN(a) ? a : parseFloat(a);
+            let numB = isNaN(b) ? b : parseFloat(b);
+
+            if (numA < numB) return sortOrder === 'asc' ? -1 : 1;
+            if (numA > numB) return sortOrder === 'asc' ? 1 : -1;
+
+            return 0;
+        });
+
         return values;
     }
 

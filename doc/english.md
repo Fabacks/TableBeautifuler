@@ -181,6 +181,16 @@ Here, `0` represents the column index and `asc` the sort direction (ascending).
         ...
 ```
 
+- **data-searchOrder**: Allows specifying a sort order for selects. It must be added in the th where the data-search="combobox" is located. The possible choices are "asc" or "desc", with the default value being "asc".
+
+```html
+<table>
+    <thead>
+        <tr>
+            <th data-search="combobox" data-searchOrder="desc">Country</th>
+        ....
+```
+
 - **data-search**: Allows a specific search for this cell. Useful for displaying nicknames but wanting the search to be on the full name. Example:
 ```html
 <table>
