@@ -492,27 +492,44 @@ class TableBeautifuller {
             row.style.display = idx < startIdx || idx >= endIdx ? "none" : "";
         });
 
+        // Supprime les boutons existants
         let buttonsDelete = this.paginationButtonsContainer.querySelectorAll('.page-btn');
         buttonsDelete.forEach((button) => {
             this.paginationButtonsContainer.removeChild(button);
         });
 
-        let startPage = Math.max(1, this.currentPage - 3);
-        let endPage = Math.min(totalPages, this.currentPage + 3) -1;
+        let numPagesAround = 1; // Nombre de pages avant et après la page courante
+        let startPage = Math.max(1, this.currentPage - numPagesAround);
+        let endPage = Math.min(totalPages, this.currentPage + numPagesAround);
 
         let lastChild = this.paginationButtonsContainer.lastElementChild;
-        for (let i = startPage-1; i <= endPage; i++) {
-            let pageNumber = startPage + i;
-            let btn = document.createElement('button');
-            btn.textContent = pageNumber;
-            btn.setAttribute('data-page', pageNumber);
-            btn.className = 'page-btn';
-            btn.classList.toggle('active', pageNumber === this.currentPage);
 
-            this.paginationButtonsContainer.insertBefore(btn, lastChild);
+        // Ajoute toujours la première page
+        if (startPage > 1) {
+            this.addPageButton(1, lastChild);
+        }
+
+        // Ajoute les pages intermédiaires.
+        for (let i = startPage; i <= endPage; i++) {
+            this.addPageButton(i, lastChild);
+        }
+
+        // Ajoute toujours la dernière page
+        if (endPage < totalPages) {
+            this.addPageButton(totalPages, lastChild);
         }
 
         this.oddEven();
+    }
+
+    addPageButton(pageNumber, lastChild) {
+        let btn = document.createElement('button');
+        btn.textContent = pageNumber;
+        btn.setAttribute('data-page', pageNumber);
+        btn.className = 'page-btn';
+        btn.classList.toggle('active', pageNumber === this.currentPage);
+
+        this.paginationButtonsContainer.insertBefore(btn, lastChild);
     }
 
     addInfoControls() {
