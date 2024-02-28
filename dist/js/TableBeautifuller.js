@@ -77,22 +77,26 @@ class TableBeautifuller {
             this.addSearchInput();
         }
 
-        if (this.displayBloc.ordering) {
-            this.addSortingArrows();
-            this.applyInitialOrder();
-        }
-
-        if (this.displayBloc.columnSearch) {
-            this.addSearchColumn();
-        }
-
         if (this.displayBloc.info) {
             this.addInfoControls();
         }
 
         if (this.displayBloc.paging) {
             this.addPaginationControls();
+        }
+
+        if (this.displayBloc.ordering) {
+            this.addSortingArrows();
+            this.applyInitialOrder();
+        }
+
+        // Ici, car on fait un paginate lorsque l'on re-ordonne le tableau 
+        if( !this.displayBloc.ordering ) {
             this.paginate();
+        }
+
+        if (this.displayBloc.columnSearch) {
+            this.addSearchColumn();
         }
     }
 
@@ -333,7 +337,12 @@ class TableBeautifuller {
         });
 
         this.table.querySelector("tbody").append(...rows);
-        this.oddEven();
+
+        if (this.displayBloc.paging) {
+            this.paginate();
+        } else {
+            this.oddEven();
+        }
     }
 
     applyInitialOrder() {
@@ -553,7 +562,6 @@ class TableBeautifuller {
     }
 
     addPaginationControls() {
-        // Items per page select
         this.paginationWrapperTop = document.createElement('div');
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
 
@@ -639,7 +647,7 @@ class TableBeautifuller {
             this.paginationWrapperTopContainer.remove();
         }
 
-        // Supprime le wrapper en dessosu du tableau 
+        // Supprime le wrapper en dessous du tableau 
         if (this.paginationWrapperDownContainer) {
             this.paginationWrapperDownContainer.remove();
         }
