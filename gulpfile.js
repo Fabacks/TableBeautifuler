@@ -6,6 +6,8 @@ const sourcemaps = require('gulp-sourcemaps');
 const header = require('gulp-header');
 const cleanCSS = require('gulp-clean-css');
 const replace = require('gulp-replace');
+const clone = require('gulp-clone');
+const merge = require('merge-stream');
 
 const package = require('./package.json');
 const banner = `/**
@@ -26,21 +28,28 @@ const banner = `/**
 function js() {
     const jsonData = JSON.stringify(require('./src/languages/en_EN.json'));
 
-    return src('src/*.js')
-        // .pipe(sourcemaps.init())
-        .pipe(replace("'@@INSERT_TRANSLATIONS_HERE@@'", jsonData))
-        .pipe(terser())
-        .pipe(header(banner))
-        .pipe(rename({ extname: '.min.js' }))
+    // Création d'un flux de base pour le traitement commun
+    const base = src('src/*.js')
+        .pipe(replace("'@@INSERT_TRANSLATIONS_HERE@@'", jsonData));
         // .pipe(sourcemaps.write('.'))
-        .pipe(dest('dist/js'));
-}
+        // .pipe(sourcemaps.init())
 
-function jsCopy() {
-    const jsonData = JSON.stringify(require('./src/languages/en_EN.json'));
+    // Flux pour la version non-minifiée
+    const nonMinified = base
+        .pipe(clone());
 
-    return src('src/*.js')
-        .pipe(replace("'@@INSERT_TRANSLATIONS_HERE@@'", jsonData))
+    // Flux pour la version minifiée
+    const minified = base
+        .pipe(clone())
+        .pipe(terser({
+            compress: {
+                drop_console: true
+        }
+        }))
+        .pipe(rename({ extname: '.min.js' }));
+
+    // Combinaison des deux flux
+    return merge(nonMinified, minified)
         .pipe(header(banner))
         .pipe(dest('dist/js'));
 }
@@ -104,8 +113,7 @@ function watchFiles() {
 
 exports.js = js;
 exports.styles = styles;
-exports.copyJs = jsCopy;
 exports.copyStyles = stylesCopy;
 exports.languages = languages;
 exports.watch = watchFiles;
-exports.default = parallel(js, styles, jsCopy, jsPlugins, jsCopyPlugins, stylesCopy, languages);
+exports.default = parallel(js, styles, jsPlugins, jsCopyPlugins, stylesCopy, languages);
