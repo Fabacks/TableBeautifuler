@@ -388,23 +388,11 @@ class TableBeautifuller {
         });
 
         rows.forEach(row => {
+            if (row.dataset.matched !== "true")
+                return;
+
             for (const [filterKey, filterQuery] of Object.entries(this.filters)) {
-                if (row.dataset.matched !== "true") 
-                    return;
-
-                // Info : data-search dans ce contexte  est sur le td des données pour avoir plus d'information exemple : <td data-search="Tiger Nixon">T. Nixon</td>
-                let rowText = ""
-                if (filterKey !== 'global') {
-                    let cell = row.cells[parseInt(filterKey)];
-                    rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
-                } else {
-                    let cells = Array.from(row.getElementsByTagName("td"));
-                    rowText = Array.from(cells).map(
-                        cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent
-                    ).join(' ');
-                }
-
-                rowText = rowText.trim().toLowerCase();
+                const rowText = this.extractRowText(row, filterKey);
                 if ( !this.matchesUsingLevenshtein(rowText, filterQuery, typeSearch) ){
                     row.style.display = "none";
                     row.dataset.matched = "false";
@@ -415,6 +403,34 @@ class TableBeautifuller {
         // Remise à zéro de la pagination et repagination avec les résultats filtrés
         this.currentPage = 1;
         this.paginate();
+    }
+
+
+     /**
+     * Extracts the text from a specific row and column index.
+     * 
+     * Info : data-search dans ce contexte  est sur le td des données pour avoir plus d'information 
+     * exemple : <td data-search="Tiger Nixon">T. Nixon</td>
+     * 
+     * @param {Object} row - The row element from which to extract the text
+     * @param {number|string} colIndex - The index of the column or 'global' for all columns
+     * @return {string} The extracted text from the specified row and column index, trimmed and converted to lowercase
+     */
+    extractRowText(row, colIndex) {
+        let rowText = "";
+        if (colIndex !== 'global') {
+            let cell = row.cells[parseInt(colIndex)];
+            rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
+
+            console.log(`Extracted text from column ${colIndex}: ${rowText}`);
+        } else {
+            let cells = Array.from(row.getElementsByTagName("td"));
+            rowText = cells.map(
+                cell => cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent
+            ).join(' ');
+        }
+
+        return rowText.trim().toLowerCase();
     }
 
     determineTemperature(typeSearch) {
