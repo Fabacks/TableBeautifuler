@@ -251,9 +251,10 @@ class TableBeautifuller {
                         select.appendChild(option);
                     });
 
-                    this.addEventList(select, 'change', this.debounce((e) => {
+                    this.addEventList(select, 'change', (e) => {
                         this.handleSearchTable(header.cellIndex, e.target.value, 'select');
-                    }, this.debounce_delai).bind(this));
+                    });
+
                     cell.appendChild(select);
                 break;
                 default:
@@ -611,7 +612,7 @@ class TableBeautifuller {
             let cell = row.cells[parseInt(colIndex)];
             rowText = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent;
 
-            console.log(`Extracted text from column ${colIndex}: ${rowText}`);
+            // console.log(`Extracted text from column ${colIndex}: ${rowText}`);
         } else {
             let cells = Array.from(row.getElementsByTagName("td"));
             rowText = cells.map(
