@@ -13,7 +13,7 @@
  */
 
 class TableBeautifuller {
-    constructor(tableId, options = {}) {
+    constructor(tableId, pOptions = {}) {
         this.table = document.querySelector(tableId);
         this.eventList = [];    // List of event listener
         this.plugins = [];      // List of plugin active
@@ -22,21 +22,32 @@ class TableBeautifuller {
         this.displayBloc = {};  // List of display
 
         // Translate
-        this.lang = options.language ?? "en_EN";
-        this.translation = options.translation ?? null;
+        this.lang = pOptions.language ?? "en_EN";
+        this.translation = pOptions.translation ?? null;
 
         // Display
-        this.displayBloc.info = options.info ?? true;
-        this.displayBloc.ordering = options.ordering ?? true;
-        this.displayBloc.paging = options.paging ?? true;
-        this.displayBloc.searching = options.searching ?? true;
-        this.displayBloc.columnSearch = options.columnSearch ?? true;
+        this.displayBloc.info = pOptions.info ?? true;
+        this.displayBloc.ordering = pOptions.ordering ?? true;
+        this.displayBloc.paging = pOptions.paging ?? true;
+        this.displayBloc.searching = pOptions.searching ?? true;
+        this.displayBloc.columnSearch = pOptions.columnSearch ?? true;
 
         // Levenshtein temperature (différence)
-        this.options.temperature = parseInt(options.temperature) || 1;
+        this.options.temperature = parseInt(pOptions.temperature) || 1;
+
+        // Type de recherche par défaut
+        this.options.searchType = pOptions.searchType ?? "levenshtein";
+        this.options.searchChooses = {
+            "Type de recherche": {
+                "strict": this.translator('searchDropStrict'),
+                "levenshtein": this.translator('searchDropLevenshtein'),
+                "regex" : this.translator('searchDropRegex'),
+                // "compose": this.translator('searchDropCompose'),
+            }
+        };
 
         // Initialisation du trie par défaut
-        let orderString = options.order || this.table.getAttribute("data-order");
+        let orderString = pOptions.order || this.table.getAttribute("data-order");
         if (typeof orderString === "string") {
             this.sortedColumns = JSON.parse(orderString);
         } else if (Array.isArray(orderString)) {
@@ -46,21 +57,21 @@ class TableBeautifuller {
         }
 
         // Initialisation des valeurs pour la pagination (nombre item par page)
-        this.pageLength = options.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 10;
+        this.pageLength = pOptions.pageLength || parseInt(this.table.getAttribute("data-page-length")) || 10;
         this.currentPage = 1;
 
         // Initialisation du nombre d'item par page dans le selector
-        this.selectItemPage = options.selectItemPage || [10, 20, 30];
+        this.selectItemPage = pOptions.selectItemPage || [10, 20, 30, 40, 50];
         if (!this.selectItemPage.includes(this.pageLength)) {
             this.selectItemPage.push(this.pageLength);
             this.selectItemPage.sort((a, b) => a - b);
         }
 
         // Initialisation du debounce
-        this.debounce_delai = options.debounceDelai || 300;
+        this.debounce_delai = pOptions.debounceDelai || 300;
 
         // Colorisation des lignes pair et impair
-        this.options.rowOddEven = options.rowOddEven ?? true;
+        this.options.rowOddEven = pOptions.rowOddEven ?? true;
 
         // this.readyPromise = this.init();
         this.init();
@@ -139,7 +150,7 @@ class TableBeautifuller {
 
     getLangDefault() {
         // The variable is replaced during compilation
-        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV"};
+        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV","searchDropStrict":"Strict","searchDropRegex":"Regex","searchDropLevenshtein":"Levenshtein"};
     }
 
     use(plugin) {
@@ -183,6 +194,9 @@ class TableBeautifuller {
     }
 
     addSearchInput() {
+        let drop = this.addSearchDropdownContent();
+        this.paginationWrapperTopContainer.appendChild(drop);
+
         this.searchInput = document.createElement("input");
         this.searchInput.title = this.translator('searchGlobalTitle');
         this.searchInput.setAttribute("type", "text");
@@ -191,7 +205,7 @@ class TableBeautifuller {
         this.paginationWrapperTopContainer.appendChild(this.searchInput);
 
         this.addEventList(this.searchInput, 'keyup', this.debounce(() => {
-            this.searchTable(null, this.searchInput.value, 'text');
+            this.handleSearchTable(null, this.searchInput.value, 'text');
         }, this.debounce_delai).bind(this));
     }
 
@@ -214,7 +228,7 @@ class TableBeautifuller {
                     input.placeholder = this.translator('searchColomnPlaceholder');
 
                     this.addEventList(input, 'input', this.debounce((e) => {
-                        this.searchTable(header.cellIndex, e.target.value, 'text');
+                        this.handleSearchTable(header.cellIndex, e.target.value, 'text');
                     }, this.debounce_delai).bind(this));
                     cell.appendChild(input);
                 break;
@@ -238,7 +252,7 @@ class TableBeautifuller {
                     });
 
                     this.addEventList(select, 'change', this.debounce((e) => {
-                        this.searchTable(header.cellIndex, e.target.value, 'select');
+                        this.handleSearchTable(header.cellIndex, e.target.value, 'select');
                     }, this.debounce_delai).bind(this));
                     cell.appendChild(select);
                 break;
@@ -252,6 +266,92 @@ class TableBeautifuller {
 
         this.table.querySelector('thead').appendChild(searchRow);
     }
+
+
+    addSearchDropdownContent() {
+        let wrapDropdown = document.createElement('div');
+        wrapDropdown.classList.add('wrapper-dropdown');
+
+        let btnDropdown = document.createElement('button');
+        btnDropdown.id = 'search-options-button';
+        btnDropdown.innerHTML = '&#8942' ;
+        btnDropdown.addEventListener('click', () => this.toggleSearchDropdown());
+        wrapDropdown.appendChild(btnDropdown);
+
+        let dropdown = document.createElement('div');
+        dropdown.id = 'search-dropdown';
+        dropdown.classList.add('dropdown');
+
+        for (let section in this.options.searchChooses) {
+            let wrapItems = document.createElement('div');
+            wrapItems.classList.add('dropdown-wrapper_items');
+            wrapItems.classList.add('dropdown-wrapper_items');
+            dropdown.appendChild(wrapItems);
+
+            let header = document.createElement('div');
+            header.classList.add('dropdown-header');
+            header.textContent = section;
+            wrapItems.appendChild(header);
+
+            for (let option in this.options.searchChooses[section]) {
+                let item = document.createElement('div');
+                item.classList.add('dropdown-item');
+                item.setAttribute('data-key', option);
+
+                if (option === this.options.searchType) {
+                    item.classList.add('selected');
+                }
+
+                let checkIcon = document.createElement('span');
+                checkIcon.classList.add('check-icon');
+                checkIcon.textContent = '✔';
+                item.appendChild(checkIcon);
+
+                let optionText = document.createElement('span');
+                optionText.textContent = this.options.searchChooses[section][option];
+                item.appendChild(optionText);
+
+                item.addEventListener('click', () => this.handleOptionSearchDropdownClick (item));
+                wrapItems.appendChild(item);
+            };
+        }
+
+        wrapDropdown.appendChild(dropdown);
+        document.addEventListener('click', (event) => this.handleOutsideSearchDropdownClick(event, wrapDropdown));
+
+        return wrapDropdown;
+    }
+
+    toggleSearchDropdown() {
+        let dropdown = document.querySelector('#search-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    handleOptionSearchDropdownClick (item) {
+        // Récupérer la clé de l'option sélectionnée & mise à jour l'option sélectionnée
+        let selectedKey = item.getAttribute('data-key');
+        this.options.searchType = selectedKey;
+
+        // Retirer la classe 'selected' des autres éléments et masquer leurs icônes de coche
+        let allItems = document.querySelectorAll('.dropdown-item');
+        allItems.forEach(element => {
+            element.classList.remove('selected');
+        });
+
+        // Ajouter la classe 'selected' à l'élément cliqué pour afficher l'icône de coche
+        item.classList.add('selected');
+
+        // On relance la recherche
+        this.searchTable('text');
+    }
+
+    handleOutsideSearchDropdownClick(event, wrapDropdown) {
+        if (!wrapDropdown.contains(event.target)) {
+            let dropdown = document.querySelector('#search-dropdown');
+            dropdown.style.display = 'none';
+        }
+    }
+
 
     getUniqueValuesForColumn(colIndex, sortOrder) {
         let values = [];
@@ -380,7 +480,7 @@ class TableBeautifuller {
         });
     }
 
-    searchTable(colIndex, query, typeSearch) {
+    handleSearchTable(colIndex, query, typeSearch) {
         query = query.trim();
 
         // on utilise 'global' comme clé pour une recherche globale ou le numéro d'index pour les colonnes
@@ -393,6 +493,10 @@ class TableBeautifuller {
             delete this.filters[key];
         }
 
+        this.searchTable(typeSearch);
+    }
+
+    searchTable(typeSearch, colIndex = null) {
         let rows = this.table.querySelectorAll("tbody tr");
 
         // Reset de la recherche
@@ -407,7 +511,27 @@ class TableBeautifuller {
 
             for (const [filterKey, filterQuery] of Object.entries(this.filters)) {
                 const rowText = this.extractRowText(row, filterKey);
-                if ( !this.matchesUsingLevenshtein(rowText, filterQuery, typeSearch) ){
+
+                //TODO : a modifier a terme par input de recherche
+                const searchType = colIndex == null ? this.options.searchType : 'levenshtein';
+
+                let isMatch = false;
+                switch (searchType) {
+                    case 'special':
+                        isMatch = this.matchesSpecial(rowText, filterQuery);
+                    break;
+                    case 'regex':
+                        isMatch = this.matchesRegex(rowText, filterQuery);
+                    break;
+                    case 'levenshtein':
+                        isMatch = this.matchesUsingLevenshtein(rowText, filterQuery, typeSearch);
+                    break;
+                    case 'strict':
+                        isMatch = this.matchesUsingLevenshtein(rowText, filterQuery, typeSearch, 0);
+                    break;
+                }
+
+                if ( !isMatch ) {
                     row.style.display = "none";
                     row.dataset.matched = "false";
                 }
@@ -419,8 +543,59 @@ class TableBeautifuller {
         this.paginate();
     }
 
+    matchesSpecial(rowText, query) {
+        const terms = query.split(/\s+/);
+        let mustInclude = [];
+        let mustExclude = [];
+        let fuzzyMatches = [];
 
-     /**
+        terms.forEach(term => {
+            if (term.startsWith('+')) {
+                mustInclude.push(term.substring(1).replace(/\*/g, ".*"));
+            } else if (term.startsWith('-')) {
+                mustExclude.push(term.substring(1).replace(/\*/g, ".*"));
+            } else if (term.endsWith('%')) {
+                fuzzyMatches.push(term.slice(0, -1));
+            } else {
+                mustInclude.push(term.replace(/\*/g, ".*"));
+            }
+        });
+
+        // Vérification des termes à inclure
+        for (let term of mustInclude) {
+            let regex = new RegExp(term);
+            if (!regex.test(rowText)) {
+                return false;
+            }
+        }
+
+        // Vérification des termes à exclure
+        for (let term of mustExclude) {
+            let regex = new RegExp(term);
+            if (regex.test(rowText)) {
+                return false;
+            }
+        }
+
+        // Vérification des correspondances floues (%)
+        for (let term of fuzzyMatches) {
+            if (this.levenshteinDistance(rowText, term) > this.options.temperature) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    matchesRegex(rowText, query) {
+        // Créer l'expression régulière à partir de la requête modifiée
+        let regex = new RegExp(query, 'i'); // 'i' pour la recherche insensible à la casse
+
+        // Tester si le texte de la rangée correspond à l'expression régulière
+        return regex.test(rowText);
+    }
+
+    /**
      * Extracts the text from a specific row and column index.
      * 
      * Info : data-search dans ce contexte  est sur le td des données pour avoir plus d'information 
@@ -448,33 +623,35 @@ class TableBeautifuller {
     }
 
     determineTemperature(typeSearch) {
-        let temperture = 0;
+        let temperature = 0;
 
         switch (typeSearch) {
             case 'text' :
-                temperture = this.options.temperature;
+                temperature = this.options.temperature;
             break;
             case 'select' :
-                temperture = 0;
+                temperature = 0;
             break;
+            default:
+                temperature = 0;
         }
 
-        return temperture;
+        return temperature;
     }
 
-    matchesUsingLevenshtein(rowText, filterQuery, typeSearch) {
+    matchesUsingLevenshtein(rowText, filterQuery, typeSearch, pTemperature = null) {
         if ( rowText.indexOf(filterQuery) !== -1) {
             return true;
         }
 
-        let temperature = this.determineTemperature(typeSearch);
+        const temperature = pTemperature ?? this.determineTemperature(typeSearch);
         if( temperature == 0 || filterQuery.length < 4 || typeof rowText !== 'string' || typeof filterQuery !== 'string') {
             return false;
         }
 
         for (let i = 0; i <= rowText.length - filterQuery.length; i++) {
             let sub = rowText.substring(i, i + filterQuery.length);
-            if (this.levenshteinDistance(sub, filterQuery) <= this.options.temperature) {
+            if (this.levenshteinDistance(sub, filterQuery) <= temperature) {
                 return true;
             }
         }
@@ -681,4 +858,10 @@ class TableBeautifuller {
             }
         }
     }
+}
+
+if (typeof exports === 'object' && typeof module !== 'undefined') {
+    module.exports = TableBeautifuller;
+} else {
+    window.TableBeautifuller = TableBeautifuller;
 }

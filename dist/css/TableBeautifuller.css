@@ -12,7 +12,43 @@
  * If you use or distribute this software, please credit the author and link back to the GitHub repository.
  */
 
-/** Partie : table **/
+.tableBeautifuller {
+  /** -----------------------------------------------
+  ------- Partie : commun ---------------------------
+  ------------------------------------------------**/
+  /** -----------------------------------------------
+  ------- Partie : table ----------------------------
+  ------------------------------------------------**/
+  /** -----------------------------------------------
+  ------- Partie : wrapper-top ----------------------
+  ------------------------------------------------**/
+  /** -----------------------------------------------
+  ------- Partie : wrapper-bottom -------------------
+  ------------------------------------------------**/
+}
+.tableBeautifuller button {
+  padding: 5px 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: transparent;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+.tableBeautifuller button:hover {
+  background-color: #007BFF;
+  color: white;
+}
+.tableBeautifuller button.active {
+  background-color: #007BFF;
+  color: white;
+}
+.tableBeautifuller button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: #cccccc;
+  pointer-events: none;
+}
 .tableBeautifuller th, .tableBeautifuller td {
   border: 1px solid #ddd;
   padding: 8px 12px;
@@ -61,8 +97,6 @@
 .tableBeautifuller.tableRowsHover tbody tr:hover {
   background-color: #e6f2ff;
 }
-
-/** Partie : wrapper-top **/
 .tableBeautifuller.pagination-wrapper-top-container .pagination-wrapper-top {
   display: flex;
   align-items: center;
@@ -77,8 +111,44 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-/** Partie : wrapper-bottom **/
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown {
+  float: right;
+  display: block;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  right: 20px;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .dropdown-content {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .dropdown-header {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .dropdown-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 0;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .check-icon {
+  display: block;
+  margin-right: 8px;
+  visibility: hidden;
+}
+.tableBeautifuller.pagination-wrapper-top-container .wrapper-dropdown .dropdown .selected .check-icon {
+  visibility: visible;
+}
 .tableBeautifuller.pagination-down-container {
   display: flex;
   align-items: center;
@@ -88,27 +158,4 @@
 }
 .tableBeautifuller.pagination-down-container .pagination-info {
   margin-right: auto;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button {
-  padding: 5px 15px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background-color: transparent;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button:hover {
-  background-color: #007BFF;
-  color: white;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button.active {
-  background-color: #007BFF;
-  color: white;
-}
-.tableBeautifuller.pagination-down-container .pagination-buttons-container button[disabled] {
-  cursor: not-allowed;
-  opacity: 0.5;
-  background-color: #cccccc;
-  pointer-events: none;
 }

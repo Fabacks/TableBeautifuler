@@ -12,9 +12,43 @@ $buttonActiveColor: white;
 $backgroundWhite: #fff;
 
 
-
-/** Partie : table **/
 .tableBeautifuller {
+    /** -----------------------------------------------
+    ------- Partie : commun ---------------------------
+    ------------------------------------------------**/
+    button {
+        padding: 5px 15px;
+        border: 1px solid $inputBorder;
+        border-radius: 3px;
+        background-color: transparent;
+        color: $buttonColor;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+            background-color: $buttonHoverBg;
+            color: $buttonActiveColor;
+        }
+
+        &.active {
+            background-color: $buttonHoverBg;
+            color: $buttonActiveColor;
+        }
+    }
+
+    button[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+        background-color: $buttonDisabledBg;
+        pointer-events: none;
+    }
+
+
+
+
+    /** -----------------------------------------------
+    ------- Partie : table ----------------------------
+    ------------------------------------------------**/
     th, td {
         border: 1px solid $borderColor;
         padding: 8px 12px;
@@ -83,69 +117,97 @@ $backgroundWhite: #fff;
             }
         }
     }
-}
 
 
 
-/** Partie : wrapper-top **/
-.tableBeautifuller.pagination-wrapper-top-container {
-    .pagination-wrapper-top {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 6px;
-    }
 
-    .search-input {
-        display: block;
-        margin-bottom: 20px;
-        padding: 5px 10px;
-        float: right;
-        border: 1px solid $inputBorder;
-        border-radius: 4px;
-    }
-}
+    /** -----------------------------------------------
+    ------- Partie : wrapper-top ----------------------
+    ------------------------------------------------**/
+    &.pagination-wrapper-top-container {
+        .pagination-wrapper-top {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+        }
 
-
-/** Partie : wrapper-bottom **/
-.tableBeautifuller.pagination-down-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-
-
-    .pagination-info {
-        margin-right: auto;
-    }
-
-    .pagination-buttons-container {
-        button {
-            padding: 5px 15px;
+        .search-input {
+            display: block;
+            margin-bottom: 20px;
+            padding: 5px 10px;
+            float: right;
             border: 1px solid $inputBorder;
-            border-radius: 3px;
-            background-color: transparent;
-            color: $buttonColor;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+            border-radius: 4px;
+        }
 
-            &:hover {
-                background-color: $buttonHoverBg;
-                color: $buttonActiveColor;
-            }
 
-            &.active {
-                background-color: $buttonHoverBg;
-                color: $buttonActiveColor;
+        .wrapper-dropdown {
+            float: right;
+            display: block;
+
+            .dropdown {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                right: 20px;
+
+                .dropdown-content {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 10px;
+                }
+
+                .dropdown-header {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+
+                .dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 5px 0;
+                }
+
+                .dropdown-item:hover {
+                    background-color: #f1f1f1;
+                }
+
+                .check-icon {
+                    display: block;
+                    margin-right: 8px;
+                    visibility: hidden;
+                }
+
+                .selected .check-icon {
+                    visibility: visible;
+                }
             }
         }
 
-        button[disabled] {
-            cursor: not-allowed;
-            opacity: 0.5;
-            background-color: $buttonDisabledBg;
-            pointer-events: none;
+    }
+
+
+    /** -----------------------------------------------
+    ------- Partie : wrapper-bottom -------------------
+    ------------------------------------------------**/
+    &.pagination-down-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+
+
+        .pagination-info {
+            margin-right: auto;
+        }
+
+        .pagination-buttons-container {
+            // Rien poour le moment 
         }
     }
 }

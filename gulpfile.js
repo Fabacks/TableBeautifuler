@@ -70,7 +70,7 @@ function jsCopyPlugins() {
 }
 
 function jsWatch(cb) {
-    series(js, jsCopy, jsPlugins, jsCopyPlugins)(cb);
+    series(js, jsPlugins, jsCopyPlugins)(cb);
 }
 
 function jsWatchPlugins(cb) {

@@ -14,5 +14,9 @@
     "copyTitle": "Copy to clipboard",
     "copyExported" : "Text copied to clipboard",
     "csv": "CSV",
-    "csvTitle": "Export to CSV"
+    "csvTitle": "Export to CSV",
+    "searchDropStrict": "Strict",
+    "searchDropRegex": "Regex",
+    "searchDropLevenshtein":  "Levenshtein",
+    "searchDropCompose": "Compose"
 }
