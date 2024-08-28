@@ -102,6 +102,9 @@ class TableBeautifuller {
     }
 
     loadTranslate() {
+        if( this.translation !== null )
+            return;
+
         if (this.lang === 'en_EN') {
             this.getLangDefault();
             return;
