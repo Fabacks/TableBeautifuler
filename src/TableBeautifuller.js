@@ -200,6 +200,19 @@ class TableBeautifuller {
         searchRow.classList.add("thead-search");
 
         let headers = this.table.querySelectorAll("thead th");
+
+        let findSearch = false;
+        for (const header of headers) {
+            let searchType = header.getAttribute('data-search') ?? '';
+            if( searchType !== '') {
+                indSearch = true;
+                break;
+            }
+        };
+
+        if( !findSearch ) 
+            return;
+
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';

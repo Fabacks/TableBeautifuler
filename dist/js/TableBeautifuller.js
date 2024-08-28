@@ -150,7 +150,7 @@ class TableBeautifuller {
 
     getLangDefault() {
         // The variable is replaced during compilation
-        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV","searchDropStrict":"Strict","searchDropRegex":"Regex","searchDropLevenshtein":"Levenshtein"};
+        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV","searchDropStrict":"Strict","searchDropRegex":"Regex","searchDropLevenshtein":"Levenshtein","searchDropCompose":"Compose"};
     }
 
     use(plugin) {
@@ -214,6 +214,19 @@ class TableBeautifuller {
         searchRow.classList.add("thead-search");
 
         let headers = this.table.querySelectorAll("thead th");
+
+        let findSearch = false;
+        for (const header of headers) {
+            let searchType = header.getAttribute('data-search') ?? '';
+            if( searchType !== '') {
+                indSearch = true;
+                break;
+            }
+        };
+
+        if( !findSearch ) 
+            return;
+
         headers.forEach(header => {
             let cell = document.createElement('th');
             let searchType = header.getAttribute('data-search') ?? '';
