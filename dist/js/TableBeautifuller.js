@@ -22,7 +22,8 @@ class TableBeautifuller {
         this.displayBloc = {};  // List of display
 
         // Translate
-        this.lang = pOptions.language ?? "en_EN";
+        this.langDefault = "en_EN";
+        this.lang = pOptions.language ?? this.langDefault;
         this.translation = pOptions.translation ?? null;
 
         // Display
@@ -37,14 +38,7 @@ class TableBeautifuller {
 
         // Type de recherche par défaut
         this.options.searchType = pOptions.searchType ?? "levenshtein";
-        this.options.searchChooses = {
-            "Type de recherche": {
-                "strict": this.translator('searchDropStrict'),
-                "levenshtein": this.translator('searchDropLevenshtein'),
-                "regex" : this.translator('searchDropRegex'),
-                // "compose": this.translator('searchDropCompose'),
-            }
-        };
+        this.options.searchChooses = {};
 
         // Initialisation du trie par défaut
         let orderString = pOptions.order || this.table.getAttribute("data-order");
@@ -78,9 +72,20 @@ class TableBeautifuller {
     }
 
     init() {
-        if( this.translation === null ) {
-            this.loadTranslate();
-        }
+        this.loadTranslate();
+
+        // Définition des types de recherche
+        this.options.searchChooses = [
+            {
+                "section": this.translator('searchOfType'),
+                "options": [
+                    { "key": "strict", "label": this.translator('searchDropStrict') },
+                    { "key": "levenshtein", "label": this.translator('searchDropLevenshtein') },
+                    { "key": "regex", "label": this.translator('searchDropRegex') },
+                    // { "key": "compose", "label": this.translator('searchDropCompose') },
+                ]
+            }
+        ];
 
         this.createWrappers();
 
@@ -116,7 +121,10 @@ class TableBeautifuller {
     }
 
     loadTranslate() {
-        if (this.lang === 'en_EN') {
+        if( this.translation !== null )
+            return;
+
+        if (this.lang === this.langDefault) {
             this.getLangDefault();
             return;
         }
@@ -150,7 +158,7 @@ class TableBeautifuller {
 
     getLangDefault() {
         // The variable is replaced during compilation
-        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV","searchDropStrict":"Strict","searchDropRegex":"Regex","searchDropLevenshtein":"Levenshtein","searchDropCompose":"Compose"};
+        this.translation = {"searchGlobalTitle":"Search in global table","searchGlobalPlaceholder":"Search...","searchColomnTitle":"Search in the column : ","searchColomnPlaceholder":"Search in the column ...","infoLabel":"Display of {{start}} element at {{end}} on {{total}} elements","previous":"Previous","next":"Next","all":"All","selectItemsDisplay":"Display","selectItemsItems":"items","selectItemsTitle":"List for numbers items display","copy":"Copy","copyTitle":"Copy to clipboard","copyExported":"Text copied to clipboard","csv":"CSV","csvTitle":"Export to CSV","searchOfType":"Type of search","searchDropStrict":"Strict","searchDropRegex":"Regex","searchDropLevenshtein":"Levenshtein","searchDropCompose":"Compose"};
     }
 
     use(plugin) {
@@ -219,7 +227,7 @@ class TableBeautifuller {
         for (const header of headers) {
             let searchType = header.getAttribute('data-search') ?? '';
             if( searchType !== '') {
-                indSearch = true;
+                findSearch = true;
                 break;
             }
         };
@@ -296,23 +304,22 @@ class TableBeautifuller {
         dropdown.id = 'search-dropdown';
         dropdown.classList.add('dropdown');
 
-        for (let section in this.options.searchChooses) {
+        this.options.searchChooses.forEach(sectionData => {
             let wrapItems = document.createElement('div');
-            wrapItems.classList.add('dropdown-wrapper_items');
             wrapItems.classList.add('dropdown-wrapper_items');
             dropdown.appendChild(wrapItems);
 
             let header = document.createElement('div');
             header.classList.add('dropdown-header');
-            header.textContent = section;
+            header.textContent = sectionData.section;
             wrapItems.appendChild(header);
 
-            for (let option in this.options.searchChooses[section]) {
+            sectionData.options.forEach(optionData => {
                 let item = document.createElement('div');
                 item.classList.add('dropdown-item');
-                item.setAttribute('data-key', option);
+                item.setAttribute('data-key', optionData.key);
 
-                if (option === this.options.searchType) {
+                if (optionData.key === this.options.searchType) {
                     item.classList.add('selected');
                 }
 
@@ -322,13 +329,13 @@ class TableBeautifuller {
                 item.appendChild(checkIcon);
 
                 let optionText = document.createElement('span');
-                optionText.textContent = this.options.searchChooses[section][option];
+                optionText.textContent = optionData.label;
                 item.appendChild(optionText);
 
-                item.addEventListener('click', () => this.handleOptionSearchDropdownClick (item));
+                item.addEventListener('click', () => this.handleOptionSearchDropdownClick(item));
                 wrapItems.appendChild(item);
-            };
-        }
+            });
+        });
 
         wrapDropdown.appendChild(dropdown);
         document.addEventListener('click', (event) => this.handleOutsideSearchDropdownClick(event, wrapDropdown));

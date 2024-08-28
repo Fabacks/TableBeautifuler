@@ -15,6 +15,7 @@
     "copyExported" : "Text copied to clipboard",
     "csv": "CSV",
     "csvTitle": "Export to CSV",
+    "searchOfType": "Type of search",
     "searchDropStrict": "Strict",
     "searchDropRegex": "Regex",
     "searchDropLevenshtein":  "Levenshtein",

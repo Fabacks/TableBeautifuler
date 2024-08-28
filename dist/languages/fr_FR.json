@@ -15,6 +15,7 @@
     "copyExported" : "Texte copié dans le presse-papiers",
     "csv": "CSV",
     "csvTitle": "Exporter en CSV",
+    "searchOfType": "Type de recherche",
     "searchDropStrict": "Strict",
     "searchDropRegex": "Regex",
     "searchDropLevenshtein":  "Levenshtein",
