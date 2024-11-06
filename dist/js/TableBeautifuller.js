@@ -4,7 +4,7 @@
  * Author: Fabacks
  * License: Free distribution except for commercial use
  * GitHub Repository: https://github.com/Fabacks/TableBeautifuller
- * Version 1.0.4
+ * Version 1.3.0
  * 
  * This software is provided "as is" without any warranty. The author is
  * not responsible for any damages or liabilities caused by the use of this software.
@@ -13,6 +13,8 @@
  */
 
 class TableBeautifuller {
+    TYPE_SEARCH_LEVENSHTEIN = "levenshtein";
+
     constructor(tableId, pOptions = {}) {
         this.table = document.querySelector(tableId);
         this.eventList = [];    // List of event listener
@@ -37,7 +39,7 @@ class TableBeautifuller {
         this.options.temperature = parseInt(pOptions.temperature) || 1;
 
         // Type de recherche par défaut
-        this.options.searchType = pOptions.searchType ?? "levenshtein";
+        this.options.searchType = pOptions.searchType ?? this.TYPE_SEARCH_LEVENSHTEIN;
         this.options.searchChooses = {};
 
         // Initialisation du trie par défaut
@@ -73,47 +75,18 @@ class TableBeautifuller {
 
     init() {
         this.loadTranslate();
-
-        // Définition des types de recherche
-        this.options.searchChooses = [
-            {
-                "section": this.translator('searchOfType'),
-                "options": [
-                    { "key": "strict", "label": this.translator('searchDropStrict') },
-                    { "key": "levenshtein", "label": this.translator('searchDropLevenshtein') },
-                    { "key": "regex", "label": this.translator('searchDropRegex') },
-                    // { "key": "compose", "label": this.translator('searchDropCompose') },
-                ]
-            }
-        ];
-
         this.createWrappers();
-
-        if (this.displayBloc.searching ) {
-            this.addSearchInput();
-        }
-
-        if (this.displayBloc.info) {
-            this.addInfoControls();
-        }
-
-        if (this.displayBloc.paging) {
-            this.addPaginationControls();
-        }
+        this.addSearchInput();
+        this.addInfoControls();
+        this.addPaginationControls();
 
         if (this.displayBloc.ordering) {
             this.addSortingArrows();
             this.applyInitialOrder();
-        }
-
-        // Ici, car on fait un paginate lorsque l'on re-ordonne le tableau 
-        if( !this.displayBloc.ordering ) {
             this.paginate();
         }
 
-        if (this.displayBloc.columnSearch) {
-            this.addSearchColumn();
-        }
+        this.addSearchColumn();
     }
 
     ready() {
@@ -177,9 +150,9 @@ class TableBeautifuller {
         this.paginationWrapperTopContainer.classList.add('tableBeautifuller', 'pagination-wrapper-top-container');
         this.table.parentNode.insertBefore(this.paginationWrapperTopContainer, this.table);
 
-        // Création du wrapper "pagination-down-container" en dessous du tableau
+        // Création du wrapper "pagination-wrapper-down-container" en dessous du tableau
         this.paginationWrapperDownContainer = document.createElement('div');
-        this.paginationWrapperDownContainer.classList.add('tableBeautifuller', 'pagination-down-container');
+        this.paginationWrapperDownContainer.classList.add('tableBeautifuller', 'pagination-wrapper-down-container');
         this.table.parentNode.appendChild(this.paginationWrapperDownContainer);
     }
 
@@ -193,15 +166,23 @@ class TableBeautifuller {
         };
     }
 
+    /**
+     * Ajouter l'écouteur d'événement à l'élément
+     * Stocker l'élément, l'événement et la fonction d'écouteur liée dans eventList
+     * 
+     * @param {*} element 
+     * @param {*} eventName 
+     * @param {*} listener 
+     */
     addEventList(element, eventName, listener) {
-        // Ajouter l'écouteur d'événement à l'élément
         element.addEventListener(eventName, listener);
-
-        // Stocker l'élément, l'événement et la fonction d'écouteur liée dans eventList
         this.eventList.push({element, eventName, listener});
     }
 
     addSearchInput() {
+        if ( !this.displayBloc.searching )
+            return;
+
         let drop = this.addSearchDropdownContent();
         this.paginationWrapperTopContainer.appendChild(drop);
 
@@ -218,12 +199,15 @@ class TableBeautifuller {
     }
 
     addSearchColumn() {
+        if ( !this.displayBloc.columnSearch )
+            return;
+
         let searchRow = document.createElement('tr');
         searchRow.classList.add("thead-search");
 
         let headers = this.table.querySelectorAll("thead th");
-
         let findSearch = false;
+
         for (const header of headers) {
             let searchType = header.getAttribute('data-search') ?? '';
             if( searchType !== '') {
@@ -291,6 +275,19 @@ class TableBeautifuller {
 
 
     addSearchDropdownContent() {
+        // Définition des types de recherche
+        this.options.searchChooses = [
+            {
+                "section": this.translator('searchOfType'),
+                "options": [
+                    { "key": "strict", "label": this.translator('searchDropStrict') },
+                    { "key": "levenshtein", "label": this.translator('searchDropLevenshtein') },
+                    { "key": "regex", "label": this.translator('searchDropRegex') },
+                    // { "key": "compose", "label": this.translator('searchDropCompose') },
+                ]
+            }
+        ];
+
         let wrapDropdown = document.createElement('div');
         wrapDropdown.classList.add('wrapper-dropdown');
 
@@ -376,20 +373,18 @@ class TableBeautifuller {
 
     getUniqueValuesForColumn(colIndex, sortOrder) {
         let values = [];
-        let rows = this.table.querySelector("tbody").querySelectorAll("tr");
-        rows.forEach(row => {
-            let cell = row.cells[colIndex];
+        let cells = this.table.querySelectorAll('tbody tr td:nth-child(' + (colIndex +1) + ')');
+        cells.forEach(cell => {
             let value = cell.hasAttribute("data-search") ? cell.getAttribute("data-search") : cell.textContent.trim();
             if (!values.includes(value)) {
                 values.push(value);
             }
         });
 
-        // Tri des valeurs en tenant compte des nombres
+        const isNumeric = this.detectColumnType(colIndex) === 'number';
         values.sort((a, b) => {
-            // Convertit en nombres si possible, sinon laisse comme chaîne
-            let numA = isNaN(a) ? a : parseFloat(a);
-            let numB = isNaN(b) ? b : parseFloat(b);
+            let numA = isNumeric ? a : parseFloat(a);
+            let numB = isNumeric ? b : parseFloat(b);
 
             if (numA < numB) return sortOrder === 'asc' ? -1 : 1;
             if (numA > numB) return sortOrder === 'asc' ? 1 : -1;
@@ -431,26 +426,42 @@ class TableBeautifuller {
         arrowSpan.textContent = currentHeader.dataset.sort === 'asc' ? '▲' : '▼';
     }
 
+    /**
+     * Fonction utilitaire pour obtenir la valeur du "data-order" si présent sinon la valeur de la cellule
+     * 
+     * @param {*} cell 
+     * @returns 
+     */
+    getCellValue_DataOrder(cell) {
+        return cell.hasAttribute('data-order') ? cell.getAttribute('data-order') : cell.textContent.trim();
+    }
+
+    /**
+     * Détecte le type de valeur pour la colonne : string ou numeric
+     * @param {*} colIndex 
+     * @returns 
+     */
     detectColumnType(colIndex) {
-        let rows = this.table.querySelector("tbody").querySelectorAll("tr");
-        for (let i = 0; i < rows.length; i++) {
-            if (rows[i].cells[colIndex]) {
-                let content = rows[i].cells[colIndex].hasAttribute('data-order') ? rows[i].cells[colIndex].getAttribute('data-order') : rows[i].cells[colIndex].textContent.trim();
-                if (!isNaN(content)) {
-                    return 'number';
-                }
+        let cells = this.table.querySelectorAll('tbody tr td:nth-child(' + (colIndex +1) + ')');
+        for (let cell of cells) {
+            let content = this.getCellValue_DataOrder(cell);
+            if (isNaN(content)) {
+                return 'string';
             }
         }
-        return 'string';
+
+        return 'number';
     }
 
     sortTable(colIndex, direction) {
-        let rows = Array.from(this.table.querySelector("tbody").querySelectorAll("tr"));
-        rows.sort((a, b) => {
-            let A = a.cells[colIndex].hasAttribute('data-order') ? a.cells[colIndex].getAttribute('data-order') : a.cells[colIndex].textContent.trim();
-            let B = b.cells[colIndex].hasAttribute('data-order') ? b.cells[colIndex].getAttribute('data-order') : b.cells[colIndex].textContent.trim();
+        let rows = Array.from(this.table.querySelectorAll(`tbody tr`));
+        const isNumericColumn = this.detectColumnType(colIndex) === 'number';
 
-            if (this.detectColumnType(colIndex) === 'number') {
+        rows.sort((a, b) => {
+            const A = this.getCellValue_DataOrder(a.cells[colIndex]);
+            const B = this.getCellValue_DataOrder(b.cells[colIndex]);
+
+            if (isNumericColumn) {
                 return direction === 'asc' ? A - B : B - A;
             } else {
                 return direction === 'asc' ? A.localeCompare(B) : B.localeCompare(A);
@@ -471,7 +482,10 @@ class TableBeautifuller {
             let [colIndex, direction] = orderCriteria;
             this.sortTable(colIndex, direction.toLowerCase());
 
-            let header = this.table.querySelector(`th:nth-child(${colIndex + 1})`);
+            let header = this.table.querySelector(`thead th:nth-child(${colIndex + 1})`);
+            if( header == undefined || header == null )
+                    return;
+
             header.dataset.sort = direction.toLowerCase();
             this.updateArrows(header);
         });
@@ -532,11 +546,9 @@ class TableBeautifuller {
 
             for (const [filterKey, filterQuery] of Object.entries(this.filters)) {
                 const rowText = this.extractRowText(row, filterKey);
-
-                //TODO : a modifier a terme par input de recherche
-                const searchType = colIndex == null ? this.options.searchType : 'levenshtein';
-
+                const searchType = colIndex == null ? this.options.searchType : this.TYPE_SEARCH_LEVENSHTEIN;
                 let isMatch = false;
+
                 switch (searchType) {
                     case 'special':
                         isMatch = this.matchesSpecial(rowText, filterQuery);
@@ -770,12 +782,18 @@ class TableBeautifuller {
     }
 
     addInfoControls() {
+        if ( !this.displayBloc.info )
+            return;
+
         this.infoLabel = document.createElement('span');
         this.infoLabel.className = 'pagination-info';
         this.paginationWrapperDownContainer.appendChild(this.infoLabel);
     }
 
     addPaginationControls() {
+        if ( !this.displayBloc.paging )
+            return;
+
         this.paginationWrapperTop = document.createElement('div');
         this.paginationWrapperTop.className = 'pagination-wrapper-top';
 

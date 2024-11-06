@@ -34,16 +34,19 @@ document.addEventListener("DOMContentLoaded", () => {
             "copyTitle": "Copier dans le presse-papier",
             "copyExported" : "Texte copié dans le presse-papiers",
             "csv": "CSV",
+            "csvTitle": "Exporter en CSV",
+            "searchOfType": "Type de recherche",
             "searchDropStrict": "Strict",
             "searchDropRegex": "Regex",
-            "searchDropLevenshtein":  "Levenshtein"
+            "searchDropLevenshtein":  "Levenshtein",
+            "searchDropCompose": "Composé"
         }
     });
 });
 </script>
 
 <div class="table-container">
-    <table id="demo-table" class="tableRowsColors tableRowsHover" data-page-length="10" data-order='[[0, "ASC"], [1, "DESC"]]'>
+    <table id="demo-table" class="tableRowsColors tableRowsHover" data-page-length="10" data-order='[[2,&quot;desc&quot;]]'>
         <thead>
             <tr>
                 <th data-search="select">Name</th>

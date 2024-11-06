@@ -1,6 +1,6 @@
 {
   "name": "tablebeautifuler",
-  "version": "1.0.4",
+  "version": "1.3.0",
   "description": "Welcome to TableBeautifuller, a JavaScript library designed to enhance your HTML tables with advanced features such as pagination, sorting, and searching.",
   "main": "index.js",
   "directories": {

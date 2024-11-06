@@ -1,6 +1,7 @@
 // Varaible color 
 $borderColor: #ddd;
 $borderFocusColor: #007BFF;
+$borderFocusBoxShadowColor: #07509e;
 $inputBorder: #ccc;
 $hoverRowColor: #e6f2ff;
 $oddRowColor: #f9f9f9;
@@ -16,33 +17,37 @@ $backgroundWhite: #fff;
     /** -----------------------------------------------
     ------- Partie : commun ---------------------------
     ------------------------------------------------**/
-    button {
-        padding: 5px 15px;
-        border: 1px solid $inputBorder;
-        border-radius: 3px;
-        background-color: transparent;
-        color: $buttonColor;
-        cursor: pointer;
-        transition: background-color 0.3s, color 0.3s;
 
-        &:hover {
-            background-color: $buttonHoverBg;
-            color: $buttonActiveColor;
+    &.pagination-wrapper-top-container,
+    &.pagination-wrapper-down-container,
+    thead tr.thead-search {
+        button {
+            padding: 5px 15px;
+            border: 1px solid $inputBorder;
+            border-radius: 3px;
+            background-color: transparent;
+            color: $buttonColor;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+
+            &:hover {
+                background-color: $buttonHoverBg;
+                color: $buttonActiveColor;
+            }
+
+            &.active {
+                background-color: $buttonHoverBg;
+                color: $buttonActiveColor;
+            }
         }
 
-        &.active {
-            background-color: $buttonHoverBg;
-            color: $buttonActiveColor;
+        button[disabled] {
+            cursor: not-allowed;
+            opacity: 0.5;
+            background-color: $buttonDisabledBg;
+            pointer-events: none;
         }
     }
-
-    button[disabled] {
-        cursor: not-allowed;
-        opacity: 0.5;
-        background-color: $buttonDisabledBg;
-        pointer-events: none;
-    }
-
 
 
 
@@ -78,23 +83,24 @@ $backgroundWhite: #fff;
 
             > input {
                 transition: 0.3s;
-            }
 
-            > input:focus {
-                border-color: $borderFocusColor;
-                box-shadow: 0 0 5px rgba(0,123,255,0.5);
+                &:focus {
+                    border-color: $borderFocusColor;
+                    box-shadow: 0 0 5px $borderFocusBoxShadowColor;
+                }
             }
 
             > select {
-                appearance: none;
-                background: url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
-                background-color: #fff;
+                // appearance: none;
+                // background: url('data:image/svg+xml;utf8,<svg fill="gray" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 5px center;
+                // background-color: #fff;
                 cursor: pointer;
+
+                &:hover {
+                    border-color: $borderFocusColor;
+                }
             }
 
-            > select:hover {
-                border-color: $borderFocusColor;
-            }
         }
     }
 
@@ -195,7 +201,7 @@ $backgroundWhite: #fff;
     /** -----------------------------------------------
     ------- Partie : wrapper-bottom -------------------
     ------------------------------------------------**/
-    &.pagination-down-container {
+    &.pagination-wrapper-down-container {
         display: flex;
         align-items: center;
         justify-content: flex-end;
